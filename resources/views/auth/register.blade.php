@@ -45,7 +45,7 @@
 
             <x-forms.error name="password" />
 
-            <button type="submit" class="mt-8 w-full h-11 rounded-full text-white bg-indigo-600 hover:opacity-90 transition-opacity">
+            <button type="submit" class="mt-5 w-full h-11 rounded-full text-white bg-blue-600 hover:opacity-90 transition-opacity">
                 Register
             </button>
             <p class="text-gray-500/90 text-sm mt-4">Already have an account? <a class="text-indigo-500 hover:underline" href="/login">Sign In</a></p>

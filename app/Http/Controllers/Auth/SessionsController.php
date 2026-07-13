@@ -7,8 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
-
-
+use App\Services\AuthClass;
 
 
 class SessionsController extends Controller
@@ -21,28 +20,11 @@ class SessionsController extends Controller
 
     public function store(Request $request){
 
-        $validated = $request->validate([
-        'email' => ['required' , 'string' , 'email' , 'max:255'],
-        'password' => ['required' , 'string' , 'min:8']
-    ]);
+      $authClass = new AuthClass();
 
-     if(! Auth::attempt($validated)){
-
-        return back()->withErrors(['password' => 'Invalid Credentials!']);
-     }   
-
-     if(auth()->user()->role === 'admin'){
-        return redirect('/admin')->with('Success' , 'Welcome Admin!');
-     }
-     
-        $request->session()->regenerate();
-
-        return redirect()->intended('/')->with('success', 'You are logged in!');
-        
+      return $authClass->login($request);
 
     }
-
-
 
     public function destroy(){
 

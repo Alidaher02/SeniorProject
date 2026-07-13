@@ -26,13 +26,8 @@ return new class extends Migration
             $table->decimal('min_temperature', 5, 2);
             $table->decimal('max_temperature', 5, 2);
 
-            $table->enum('status', [
-            'pending',
-            'in_transit',
-            'delivered',
-            'cancelled'
-            ])->default('pending');
-
+            $table->string('status')->default('pending');
+            
             $table->dateTime('departure_date')->nullable();
             $table->dateTime('expected_arrival')->nullable();
 
