@@ -40,6 +40,7 @@ class AdminController extends Controller
         return view('admin.alerts');
    }
 
+    
    public function stats(){
     return response()->json([
      'total' => Shipment::count(),
