@@ -1,4 +1,5 @@
-<x-admin-layout>
+<x-admin-layout>    
+
 
 <div class="min-h-screen p-6">
 
@@ -10,17 +11,17 @@
 
             <div>
                 <h1 class="text-lg font-bold text-gray-800">
-                    Customers
+                    Drivers
                 </h1>
 
                 <p class="text-xs text-gray-400">
-                    Manage your registered customers
+                    Manage your registered Drivers
                 </p>
             </div>
 
 
-            <button id="addCustomer" class=" cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-700">
-                + Add Customer
+            <button id="addDriver" class="cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-700">
+                + Add Driver
             </button>
 
         </div>
@@ -40,7 +41,7 @@
                         <tr>
 
                             <th class="px-5 py-3 text-xs font-semibold text-blue-600">
-                                Customer
+                                Driver
                             </th>
 
 
@@ -73,7 +74,7 @@
 
                     <tbody class="divide-y divide-blue-50">
 
-                       @forelse ($customers as $customer)
+                       @forelse ($drivers as $driver)
 
 <tr class="transition hover:bg-blue-50/50">
 
@@ -83,11 +84,11 @@
         <div>
 
             <p class="text-sm font-semibold text-gray-800">
-                {{ $customer->name }}
+                {{ $driver->name }}
             </p>
 
             <p class="text-xs text-gray-400">
-                Customer
+                driver
             </p>
 
         </div>
@@ -98,8 +99,9 @@
 
 
     <td class="px-5 py-4 text-sm text-gray-600">
-        {{ $customer->email }}
+        {{ $driver->email }}
     </td>
+
 
 
 
@@ -107,13 +109,10 @@
     <td class="px-5 py-4">
 
         <span class="rounded-lg bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-600">
-            {{ $customer->shipments->count() }}
+           {{ $driver->assigned_shipments_count }}
         </span>
 
     </td>
-
-
-
 
     <td class="px-5 py-4">
 
@@ -128,7 +127,8 @@
 
     <td class="px-5 py-4">
 
-        <form action="/admin/customers/{{ $customer->id }}" method="POST">
+
+        <form action="/admin/drivers/{{ $driver->id }}" method="POST">
         @csrf
         @method('DELETE')
         <button class="rounded-lg cursor-pointer border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-blue-100">
@@ -140,14 +140,11 @@
 
     </td>
 
-</tr>
-
-
 @empty
 
 <tr>
     <td colspan="5" class="px-5 py-6 text-center text-sm text-gray-400">
-        No customers found
+        No Drivers found
     </td>
 </tr>
 
@@ -167,8 +164,8 @@
 
 </div>
 
-
-<div class="hidden" id="customerCard"> 
+{{-- add driver card --}}
+<div class="hidden" id="driverCard"> 
   <div
     
     class="fixed  inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
@@ -187,11 +184,11 @@
 
                 <div>
                     <h2 class="text-xl font-bold text-white">
-                        Add Customer
+                        Add Driver
                     </h2>
 
                     <p class="text-sm text-blue-100">
-                        Create a new Customer account.
+                        Create a new driver account.
                     </p>
                 </div>
 
@@ -200,21 +197,20 @@
         </div>
 
         <!-- Body -->
-        <form action="/admin/customers" method="POST" class="space-y-5 p-6">
+        <form action="/admin/drivers" method="POST" class="space-y-5 p-6">
 
             @csrf
 
             <!-- Name -->
-            <!-- Name -->
             <div>
                 <label class="mb-2 block text-sm font-semibold text-gray-700">
-                    Customer Name
+                    Driver Name
                 </label>
 
                 <input
                     type="text"
                     name="name"
-                    placeholder="Enter Customer's name"
+                    placeholder="Enter driver's name"
                     class="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100">
 
                 <x-forms.error name="name"/>
@@ -229,7 +225,7 @@
                 <input
                     type="email"
                     name="email"
-                    placeholder="customer@email.com"
+                    placeholder="driver@email.com"
                     class="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100">
 
                 <x-forms.error name="email"/>
@@ -255,7 +251,7 @@
 
                 <button
                     type="button"
-                   id="customerCancelBtn"
+                   id="cancelBnt"
                     class="rounded-xl cursor-pointer border border-gray-300 px-5 py-2.5 font-medium text-gray-700 hover:bg-gray-100">
 
                     Cancel
@@ -266,14 +262,18 @@
                     type="submit"
                     class="rounded-xl cursor-pointer bg-blue-600 px-6 py-2.5 font-semibold text-white transition hover:bg-blue-700">
 
-                     Add Customer
+                    + Add Driver
 
                 </button>
+
+            </div>
+
         </form>
 
     </div>
 
 </div>  
 </div>
+
 
 </x-admin-layout>

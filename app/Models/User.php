@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable(['name', 'email', 'password' , 'role'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -34,12 +34,28 @@ class User extends Authenticatable
     public function shipments(): hasMany
     {
 
-         return $this->hasMany(Shipment::class);
+         return $this->hasMany(Shipment::class , 'customer_id');
+    }
+
+    public function assignedShipments(): hasMany
+    {
+
+         return $this->hasMany(Shipment::class , 'driver_id');
     }
 
     public function isAdmin(){
         
         return $this->role === 'admin';
+    }
+
+    public function isDriver(){
+        
+        return $this->role === 'driver';
+    }
+
+    public function isCustomer(){
+        
+        return $this->role === 'customer';
     }
 }
 

@@ -31,6 +31,10 @@ public function login(Request $request)
             return redirect('/admin')->with('success', 'Welcome Admin!');
         }
 
+        if (Auth::user()->isDriver()) {
+            return redirect('/driver')->with('success', 'Welcome Driver!');
+        }
+
         return redirect()->intended('/')->with('success', 'You are logged in!');    }
 
      

@@ -53,26 +53,27 @@
     <div class="navbar-center hidden lg:flex">
 
         <ul class="menu menu-horizontal gap-2 px-1">
-
+            @if(Auth::user()->role === 'customer')
             <li>
                 <a href="/shipments"
-                    class="rounded-lg text-sm font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600">
+                    class=" cursor-pointer rounded-lg text-sm font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600">
                     My Shipments
                 </a>
             </li>
 
             <li>
                 <a href="/shipments/request"
-                    class="rounded-lg text-sm font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600">
+                    class="cursor-pointer rounded-lg text-sm font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600">
                     Request Shipment
                 </a>
             </li>
+            @endif
 
 
             @if(Auth::user()->role === 'admin')
             <li>
                 <a href="/admin"
-                    class="rounded-lg text-sm font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600">
+                    class="cursor-pointer rounded-lg text-sm font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600">
                     Admin Dashborad
                 </a>
             </li>
@@ -97,9 +98,16 @@
             <p class="text-sm font-semibold text-gray-800">
                 {{ Auth::user()->name }}
             </p>
-            <p class="text-xs text-gray-500">
+            @if (Auth::user()->role === 'customer')
+              <p class="text-xs text-gray-500">
                 Customer
             </p>
+            @else 
+             <p class="text-xs text-gray-500">
+                Driver
+            </p> 
+            @endif
+            
         </div>
 
 
@@ -114,7 +122,7 @@
             @method('DELETE')
 
             <button type="submit"
-                class="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-600 hover:text-white">
+                class="cursor-pointer rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-600 hover:text-white">
                 Logout
             </button>
 
@@ -129,12 +137,12 @@
     <div class="navbar-end flex items-center gap-3">
 
         <a href="/login"
-            class="text-sm font-medium text-gray-600 hover:text-blue-600">
+            class="text-sm font-medium text-gray-600 hover:text-blue-600 cursor-pointer">
             Sign In
         </a>
 
         <a href="/register"
-            class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700">
+            class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 cursor-pointer">
             Sign Up
         </a>
 

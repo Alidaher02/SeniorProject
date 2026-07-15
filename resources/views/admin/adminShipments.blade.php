@@ -33,7 +33,7 @@
         origin="{{ $shipment->origin }}"
         destination="{{ $shipment->destination }}"
         shipmentId="{{ $shipment->{'tracking-number'} }}"
-        detailsUrl="{{ url('/shipments/' . $shipment->id) }}"
+        detailsUrl="{{ url('/showAdminShipments/' . $shipment->id) }}"
         />   
     
     

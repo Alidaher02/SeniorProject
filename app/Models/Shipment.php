@@ -11,6 +11,8 @@ use App\Enums\ShipmentStatus;
 class Shipment extends Model
 {
     protected $fillable = [
+    'customer_id',
+    'driver_id',
     'product_name',
     'description',
     'origin',
@@ -27,9 +29,14 @@ class Shipment extends Model
         'status' => ShipmentStatus::class
     ];
 
-    public function user(): BelongsTo
-    {
+    public function customer(): BelongsTo
+{
+    return $this->belongsTo(User::class, 'customer_id');
+}
 
-         return $this->belongsTo(User::class);
-    }
+
+public function driver(): BelongsTo
+{
+    return $this->belongsTo(User::class, 'driver_id');
+}
 }

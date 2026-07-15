@@ -21,10 +21,20 @@
 <body class="">
       <x-nav />
     
+<div id="pageLoader"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-white/70 backdrop-blur-sm transition-opacity duration-1000">
 
-    <main class="max-w-7xl mx-auto px-6 py-8">
+    <div class="h-10 w-10 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600"></div>
+
+</div>
+
+
+<div id="pageContent" class="opacity-0 transition-opacity duration-500">
+ <div class="max-w-7xl mx-auto px-6 py-8">
         {{ $slot }}
-    </main>
+  </div>
+</div>
+   
 
 @session('success')
 

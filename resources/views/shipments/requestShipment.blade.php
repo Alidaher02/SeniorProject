@@ -81,12 +81,24 @@
             <label class="relative flex cursor-pointer flex-col gap-3 rounded-xl bg-blue-50 border-2 border-blue-600 p-4">
               <input type="checkbox" name="shipment_type" class="absolute right-4 top-4 h-4 w-4 accent-blue-600" checked onclick="return false;">
               <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 text-slate-500">
-                <i class="fa-solid fa-box"></i>
+               <x-icons.humadity />
               </div>
               <div>
                 <p class="text-sm font-semibold text-slate-900">Humadity Sensitive</p>
-                <p class="mt-0.5 text-xs text-slate-500">For general items and non-sensitive goods.</p>
+                <p class="mt-0.5 text-xs text-slate-500">Monitors moisture levels to ensure safe shipment conditions.</p>
               </div>
+            </label>
+
+            
+            <label class="relative flex cursor-pointer flex-col gap-3 rounded-xl border-2 border-blue-600 bg-blue-50 p-4">
+            <input type="checkbox" name="shipment_type" class="absolute right-4 top-4 h-4 w-4 accent-blue-600" checked onclick="return false;">
+            <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-100 text-blue-600">
+            <i class="fa-solid fa-location-dot"></i>
+            </div>
+            <div>
+            <p class="text-sm font-semibold text-slate-900">GPS Tracking</p>
+            <p class="mt-0.5 text-xs text-slate-500">Tracks shipment location and provides real-time updates.</p>
+            </div>
             </label>
 
               

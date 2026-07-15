@@ -26,30 +26,41 @@
             Dashboard
         </a>
 
-        <a href="/admin/shipments"
+        <a href="/admin/approved"
  @class([
         'mb-1 flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium text-gray-600',
-        'border-l-4  border-blue-600 bg-blue-50 px-3 text-sm font-medium text-blue-600' => request()->is('admin/shipments'),
+        'border-l-4  border-blue-600 bg-blue-50 px-3 text-sm font-medium text-blue-600' => request()->is('admin/approved'),
         ])
         >
             <i class="fa-solid fa-box w-5 text-center text-slate-400"></i>
-            Shipments
+            approved
         </a>
 
-        <a href="#"
-            class="mb-1 flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900">
+        <a href="/admin/requests"
+         @class([
+        'mb-1 flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium text-gray-600',
+        'border-l-4  border-blue-600 bg-blue-50 px-3 text-sm font-medium text-blue-600' => request()->is('admin/requests'),
+        ])>
             <i class="fa-solid fa-clock-rotate-left w-5 text-center text-slate-400"></i>
             Shipment Requests
         </a>
 
-        <a href="#"
-            class="mb-1 flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900">
+        <a href="/admin/intransit"
+        @class([
+        'mb-1 flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium text-gray-600',
+        'border-l-4  border-blue-600 bg-blue-50 px-3 text-sm font-medium text-blue-600' => request()->is('admin/intransit'),
+        ])
+        >
             <i class="fa-solid fa-truck-fast w-5 text-center text-slate-400"></i>
             In Transit
         </a>
 
-        <a href="#"
-            class="mb-1 flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900">
+        <a href="/admin/delivered"
+            @class([
+        'mb-1 flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium text-gray-600',
+        'border-l-4  border-blue-600 bg-blue-50 px-3 text-sm font-medium text-blue-600' => request()->is('admin/delivered'),
+        ])
+        >
             <i class="fa-solid fa-circle-check w-5 text-center text-slate-400"></i>
             Delivered
         </a>
@@ -70,14 +81,21 @@
             Customers
         </a>
 
-        <a href="#"
-            class="mb-1 flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900">
+        <a href="/admin/drivers"
+        @class([
+        'mb-1 flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium text-gray-600',
+        'border-l-4  border-blue-600 bg-blue-50 px-3 text-sm font-medium text-blue-600' => request()->is('admin/drivers'),
+        ])
+        >
             <i class="fa-solid fa-user-tie w-5 text-center text-slate-400"></i>
             Drivers
         </a>
 
         <a href="/admin/alerts"
-            class="mb-1 flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900">
+        @class([
+        'mb-1 flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium text-gray-600',
+        'border-l-4  border-blue-600 bg-blue-50 px-3 text-sm font-medium text-blue-600' => request()->is('admin/alerts'),
+        ])>
             <i class="fa-solid fa-chart-column w-5 text-center text-slate-400"></i>
             Alerts
         </a>
@@ -117,7 +135,7 @@
        @method('DELETE')
 
        <button
-            class="flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-slate-200 text-sm font-medium text-slate-600 transition hover:border-red-200 hover:bg-red-50 hover:text-red-600">
+            class="flex h-10 w-full items-center cursor-pointer justify-center gap-2 rounded-lg border border-slate-200 text-sm font-medium text-slate-600 transition hover:border-red-200 hover:bg-red-50 hover:text-red-600">
 
             <i class="fa-solid fa-right-from-bracket"></i>
 

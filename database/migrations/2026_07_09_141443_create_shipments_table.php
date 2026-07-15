@@ -13,7 +13,18 @@ return new class extends Migration
     {
         Schema::create('shipments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+
+            // User with customer role
+        $table->foreignId('customer_id')
+            ->constrained('users')
+            ->cascadeOnDelete();
+
+        // User with driver role
+        $table->foreignId('driver_id')
+            ->nullable()
+            ->constrained('users')
+            ->nullOnDelete();
+
 
             $table->string('product_name');
             $table->string('tracking-number')->unique();

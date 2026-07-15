@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Shipment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use App\Notifications\ShipmentRequested;
 use Illuminate\Support\Str;
 
@@ -16,13 +17,15 @@ class ShipmentController extends Controller
      */
     public function index(Shipment $shipment , Request $request)
     {
-        $shipments = Auth::user()
-        ->shipments()
+        Gate::authorize('shipments.shipments');
+
+        $shipments = Shipment::where('customer_id' , Auth::id())
         ->when($request->status, function ($query , $status){
               $query->where('status' , $status);
         })
         ->latest()
         ->get();
+
 
         return view('shipments.shipments' , [
           'shipments' => $shipments
@@ -34,6 +37,9 @@ class ShipmentController extends Controller
      */
     public function create()
     {
+        
+     Gate::authorize('shipments.shipments');
+
         return view('shipments.requestShipment');
     }
 
@@ -44,6 +50,7 @@ class ShipmentController extends Controller
     {
 
     $request->validate([
+        
     'product_name' => ['required', 'string', 'max:255'],
     'description' => ['nullable', 'string', 'max:1000'],
     'origin' => ['required', 'string', 'max:255'],
@@ -54,8 +61,12 @@ class ShipmentController extends Controller
     'expected_arrival' => ['required', 'date', 'after:departure_date'],
     ]);
 
+    if (auth()->user()->shipments()->where('status', 'pending')->exists()) {
+    return back()->with('error', 'You already have a pending shipment request.');
+       }
+
        $shipment = Auth::user()->shipments()->create([
-            
+        'customer_id' => Auth::id(),
         'product_name' => request('product_name'),
         'description' => request('description'),
         'origin' => request('origin'),

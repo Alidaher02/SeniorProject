@@ -23,8 +23,22 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+
+    Gate::define('shipments.shipments', function (User $user) {
+            return $user->isCustomer()
+                ? Response::allow()
+                : Response::denyAsNotFound();
+       });
+
+
        Gate::define('admin.admin', function (User $user) {
             return $user->isAdmin()
+                ? Response::allow()
+                : Response::denyAsNotFound();
+       });
+
+        Gate::define('driver.driverDashboard', function (User $user) {
+            return $user->isDriver()
                 ? Response::allow()
                 : Response::denyAsNotFound();
        });
