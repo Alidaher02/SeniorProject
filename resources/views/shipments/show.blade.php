@@ -4,7 +4,28 @@
 <div class="min-h-screen p-6">
 
     <!-- Main Card -->
-    <a href="/"
+    @if (Auth::user()->role === 'admin')
+          <a href="/admin"
+   class="mb-3 px-20 inline-flex items-center gap-1 text-xs font-medium text-blue-600 transition hover:text-blue-800">
+
+    <svg xmlns="http://www.w3.org/2000/svg"
+         class="h-3.5 w-3.5"
+         fill="none"
+         viewBox="0 0 24 24"
+         stroke="currentColor">
+
+        <path stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 19l-7-7 7-7" />
+
+    </svg>
+
+    Back
+
+</a>
+    @else
+          <a href="/"
    class="mb-3 px-20 inline-flex items-center gap-1 text-xs font-medium text-blue-600 transition hover:text-blue-800">
 
     <svg xmlns="http://www.w3.org/2000/svg"
@@ -23,6 +44,8 @@
     Home
 
 </a>
+    @endif
+  
     <div class="mx-auto max-w-5xl rounded-2xl border border-blue-100 bg-white shadow-sm">
         <!-- Header -->
         <div class="flex items-center justify-between rounded-t-2xl  {{ $shipment->status === App\Enums\ShipmentStatus::APPROVED ? 'border-blue-100 bg-blue-50 border-b' : 'bg-yellow-50' }}  px-5 py-4">
@@ -42,8 +65,8 @@
 
                 <!-- Edit Button -->
                 @if ($shipment->status === App\Enums\ShipmentStatus::PENDING)
-                     <button
-                    class="flex items-center gap-1.5 rounded-lg border border-blue-200 bg-white px-3 py-1.5 text-xs font-semibold text-blue-600 transition hover:bg-blue-50">
+                     <button 
+                    class="flex cursor-pointer editBtn items-center gap-1.5 rounded-lg border border-blue-200 bg-white px-3 py-1.5 text-xs font-semibold text-blue-600 transition hover:bg-blue-50">
 
                     <svg xmlns="http://www.w3.org/2000/svg"
                          class="h-3.5 w-3.5"
@@ -511,7 +534,7 @@
              <div class="flex items-center gap-2">
                 <!-- Edit Button -->
                      <button
-                    class="flex items-center gap-1.5 rounded-lg border border-blue-200 bg-white px-3 py-1.5 text-xs font-semibold text-blue-600 transition hover:bg-blue-50">
+                    class="editBtn flex items-center gap-1.5 rounded-lg border border-blue-200 bg-white px-3 py-1.5 text-xs font-semibold text-blue-600 transition hover:bg-blue-50">
 
                     <svg xmlns="http://www.w3.org/2000/svg"
                          class="h-3.5 w-3.5"
@@ -812,22 +835,23 @@
 
 
                 <div class="mt-2 flex items-center justify-between">
-
-                    <h2 class="text-2xl font-bold text-blue-600">
-                        5°C
+                    <h2 class="text-2xl font-bold" id="temperature">
+                    
                     </h2>
 
 
-                    <span class="rounded-lg bg-green-100 px-2 py-1 text-[11px] font-semibold text-green-600">
-                        Normal
-                    </span>
+                    {{-- @if ($sensorReading->temperature > $shipment->max_temperature + 10) --}}
+                    <span id="tempMessage"  class="">
+                    </span> 
+
 
                 </div>
 
 
                 <p class="mt-2 text-xs text-gray-500">
-                    Range: 2°C - 8°C
+                    Range: {{ $shipment->min_temperature}}°C - {{ $shipment->max_temperature}}°C
                 </p>
+
 
             </div>
 
@@ -844,15 +868,17 @@
 
                 <div class="mt-2 flex items-center justify-between">
 
-                    <h2 class="text-2xl font-bold text-blue-600">
-                        54%
+                    <h2 id="humidity" class="text-2xl font-bold
+
+                    ">
+
+                        --
                     </h2>
 
-
-                    <span class="rounded-lg bg-green-100 px-2 py-1 text-[11px] font-semibold text-green-600">
-                        Stable
-                    </span>
-
+                    <span id="humidityMessage">
+                    --
+                    </span> 
+                 
                 </div>
 
 
@@ -886,12 +912,6 @@
                     </div>
 
 
-
-                    <button class="rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700">
-                        View Map
-                    </button>
-
-
                 </div>
 
 
@@ -899,7 +919,7 @@
                 <!-- Fake Map -->
                 <div class="mt-4 flex h-32 items-center justify-center rounded-xl bg-blue-100">
 
-                    <div class="text-center">
+                    <div id="locationBtn" class="text-center cursor-pointer">
 
                         <svg xmlns="http://www.w3.org/2000/svg"
                              class="mx-auto h-8 w-8 text-blue-600"
@@ -915,7 +935,7 @@
                         </svg>
 
 
-                        <p class="mt-1 text-xs text-blue-600">
+                        <p  class=" mt-1 text-xs text-blue-600">
                             GPS Tracking Active
                         </p>
 
@@ -1003,6 +1023,308 @@
 
 @endif
 
+<!-- Edit Modal -->
+<div id="editModel" class="hidden">
+ <div class="fixed inset-0 z-50 flex items-center justify-center">
+<div class="w-full max-w-xl h-[700px] rounded-3xl border border-blue-100 bg-white shadow-xl overflow-scroll">
+
+    <!-- Header -->
+    <div class="flex items-center gap-3 bg-blue-50 px-6 py-4">
+        <i class="fa-solid fa-pen-to-square text-xl text-blue-600"></i>
+
+        <h2 class="text-lg font-bold text-blue-700">
+            Edit Shipment
+        </h2>
+    </div>
+
+    <form action="/shipments/{{ $shipment->id }}" method="POST">
+    @csrf
+    @method('PATCH')
+    <div class="space-y-5 p-6">
+
+
+        <!-- Shipment Name -->
+        <div>
+            <label class="mb-2 block text-sm font-semibold text-gray-700">
+                Shipment Name
+            </label>
+
+          
+
+            <textarea
+            name="product_name"
+    class="w-full rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-gray-700 shadow-sm transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 resize-none"
+    rows="2">{{ $shipment->product_name }}</textarea>
+            </div>
+
+
+        <!-- Locations -->
+        <div class="grid grid-cols-2 gap-5">
+
+            <div>
+                <label class="mb-2 block text-sm font-semibold text-gray-700">
+                    Pickup Location
+                </label>
+
+                <textarea
+                name="origin"
+    class="w-full rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-gray-700 shadow-sm transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 resize-none"
+    rows="2">{{ $shipment->origin }}</textarea>
+            </div>
+
+
+            <div>
+                <label class="mb-2 block text-sm font-semibold text-gray-700">
+                    Delivery Location
+                </label>
+
+                <textarea
+                name="destination"
+    class="w-full rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-gray-700 shadow-sm transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 resize-none"
+    rows="2">{{ $shipment->destination }}</textarea>
+            </div>
+
+        </div>
+
+
+        <!-- Dates -->
+        <div class="grid grid-cols-2 gap-5">
+
+            <div>
+                <label class="mb-2 block text-sm font-semibold text-gray-700">
+                    Departure Date
+                </label>
+
+            <input
+                name="departure_date"
+                type="datetime-local"
+                value="{{ \Carbon\Carbon::parse($shipment->departure_date)->format('Y-m-d\TH:i') }}"
+                class="w-full rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm">
+            </div>
+
+
+            <div>
+                <label class="mb-2 block text-sm font-semibold text-gray-700">
+                    Expected Arrival
+                </label>
+
+               <input
+              name="expected_arrival"
+             type="datetime-local"
+               value="{{ \Carbon\Carbon::parse($shipment->expected_arrival)->format('Y-m-d\TH:i') }}"
+              class="w-full rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm">
+          </div>
+
+        </div>
+
+
+        <!-- Temperature -->
+        <div class="grid grid-cols-2 gap-5">
+
+            <div>
+                <label class="mb-2 block text-sm font-semibold text-gray-700">
+                    Min Temperature
+                </label>
+
+                <input
+                    name="min_temperature"
+                    type="number"
+                    value="2"
+                    class="w-full rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm">
+            </div>
+
+
+            <div>
+                <label class="mb-2 block text-sm font-semibold text-gray-700">
+                    Max Temperature
+                </label>
+
+                <input
+                    name="max_temperature"
+                    type="number"
+                    value="8"
+                    class="w-full rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm">
+            </div>
+            <div>
+
+               <label class="mb-2 block text-sm font-semibold text-gray-700">
+                    Min Humidity
+                </label>
+
+                <input
+                    name="min_humidity"
+                    type="number"
+                    value="2"
+                    class="w-full rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm">
+            </div>
+
+
+            <div>
+                <label class="mb-2 block text-sm font-semibold text-gray-700">
+                    Max Humidity
+                </label>
+
+                <input
+                    name="max_humidity"
+                    type="number"
+                    value="8"
+                    class="w-full rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm">
+            </div>
+
+        </div>
+
+
+        <!-- Description -->
+        <div>
+            <label class="mb-2 block text-sm font-semibold text-gray-700">
+                Description
+            </label>
+
+            <textarea
+                name="description"
+                rows="4"
+                class="w-full rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100">{{ $shipment->description   }}</textarea>
+        </div>
+
+
+        <!-- Buttons -->
+        <div class="flex justify-end gap-3 border-t border-blue-100">
+
+            <button
+            id="editClose"
+                class="rounded-xl border border-gray-300 px-5 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100">
+                Cancel
+            </button>
+
+
+            <button
+                class="rounded-xl bg-blue-600 px-6 py-2 text-sm font-semibold text-white hover:bg-blue-700">
+                <i class="fa-solid fa-save mr-1"></i>
+                Save Changes
+            </button>
+
+        </div>
+
+
+    </div>
+
+</div>
+</form>
+</div> 
+</div>
+
+<script>
+
+   function loadReading() {
+    const temperature = document.getElementById("temperature");
+    const tempMessage = document.getElementById("tempMessage");
+    const humidityMessage = document.getElementById("humidityMessage");
+
+    fetch('/shipments/{{ $shipment->id }}/sensor-reading')
+        .then(response => response.json())
+        .then(data => {
+
+            temperature.textContent =
+                data.temperature ?? "--";
+         if (data.temperature > {{ $shipment->max_temperature }} + 10) {
+
+    temperature.style.setProperty("color", "#dc2626", "important"); // red-600
+
+    tempMessage.innerHTML = `
+        <span class="rounded-lg bg-red-100 px-2 py-1 text-[11px] font-semibold text-red-600">
+            Warning: High Temperature
+        </span>
+    `;
+
+} else if (data.temperature > {{ $shipment->max_temperature }}) {
+
+    temperature.style.setProperty("color", "#dc2626", "important"); // red-600
+
+    tempMessage.innerHTML = `
+        <span class="rounded-lg bg-red-100 px-2 py-1 text-[11px] font-semibold text-red-600">
+            High Temperature
+        </span>
+    `;
+
+} else if (data.temperature < {{ $shipment->min_temperature }}) {
+
+    temperature.style.setProperty("color", "#0891b2", "important"); // cyan-600
+
+    tempMessage.innerHTML = `
+        <span class="rounded-lg bg-cyan-100 px-2 py-1 text-[11px] font-semibold text-cyan-600">
+            Low Temperature
+        </span>
+    `;
+
+} else {
+
+    temperature.style.setProperty("color", "#16a34a", "important"); // green-600
+
+    tempMessage.innerHTML = `
+        <span class="rounded-lg bg-green-100 px-2 py-1 text-[11px] font-semibold text-green-600">
+            Normal
+        </span>
+    `;
+}
+
+            const humidity = document.getElementById("humidity");
+            document.getElementById("humidity").textContent =
+                data.humidity ?? "--";
+
+humidity.textContent = data.humidity ?? "--";
+
+if (data.humidity > {{ $shipment->max_humidity }} + 10) {
+
+    humidity.style.setProperty("color", "#dc2626", "important"); // red-600
+
+    humidityMessage.innerHTML = `
+        <span class="rounded-lg bg-red-100 px-2 py-1 text-[11px] font-semibold text-red-600">
+            Warning: High humidity
+        </span>
+    `;
+
+} else if (data.humidity > {{ $shipment->max_humidity }}) {
+
+    humidity.style.setProperty("color", "#dc2626", "important"); // red-600
+
+    humidityMessage.innerHTML = `
+        <span class="rounded-lg bg-red-100 px-2 py-1 text-[11px] font-semibold text-red-600">
+            High humidity
+        </span>
+    `;
+
+} else if (data.humidity < {{ $shipment->min_humidity }}) {
+
+    humidity.style.setProperty("color", "#0891b2", "important"); // cyan-600
+
+    humidityMessage.innerHTML = `
+        <span class="rounded-lg bg-cyan-100 px-2 py-1 text-[11px] font-semibold text-cyan-600">
+            Low humidity
+        </span>
+    `;
+
+} else {
+
+    humidity.style.setProperty("color", "#16a34a", "important"); // green-600
+
+    humidityMessage.innerHTML = `
+        <span class="rounded-lg bg-green-100 px-2 py-1 text-[11px] font-semibold text-green-600">
+            Normal
+        </span>
+    `;
+}
+
+
+                
+
+        });
+
+}
+
+loadReading();
+setInterval(loadReading, 5000);
+
+</script>
 
 
 </x-layout>

@@ -4,13 +4,14 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Shipment;
 use App\Models\User;
+use App\Models\Alert;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
 use App\Enums\ShipmentStatus;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 
 class AdminController extends Controller
@@ -25,25 +26,50 @@ class AdminController extends Controller
 
    public function shipmentsView(){
 
-       Gate::authorize('admin.admin');
+
+       $shipmentStatus = [
+        Shipment::where('status', 'pending')->count(),
+        Shipment::where('status', 'approved')->count(),
+        Shipment::where('status', 'in_transit')->count(),
+        Shipment::where('status', 'delivered')->count(),
+        Shipment::where('status', 'rejected')->count(),
+    ];
+
+    $customers = User::where('role', 'customer')->count();
+
+   $drivers = User::where('role', 'driver')->count();
+
+        $userStats = [
+            $customers,
+            $drivers
+        ];
+
 
 
         return view('admin.adminShipments' , [
 
-            'shipments' => Shipment::where('status' , '!=' , 'pending')->latest()->get()
+            'shipments' => Shipment::where('status' , '!=' , 'pending')->latest()->get(),
+            'shipmentStatus' => $shipmentStatus,
+            'userStats' => $userStats
         ]);
    }
 
    public function customersView(){
+
+
 
         return view('admin.customers' , [
             'customers' => User::where('role' , 'customer')->get()
         ]);
    }
 
-   public function alertsView(){
+   public function alertsView(Alert $alerts){
 
-        return view('admin.alerts');
+   
+
+        return view('admin.alerts' ,[
+            'alerts' => $alerts->latest()->get()
+        ]);
    }
 
    public function requests(){
@@ -69,6 +95,7 @@ class AdminController extends Controller
 
    public function approved(){
 
+
         return view('admin.approved' , [
             'shipments' => Shipment::where('status' , 'approved')->latest()->get(),
             'drivers' => User::where('role' , 'driver')->latest()->get()
@@ -77,12 +104,16 @@ class AdminController extends Controller
 
    public function showAdminShipments(Shipment $shipment){
 
+
+
      return view('admin.showAdminShipment', [
           'shipment' => $shipment
      ]);
    }
 
    public function drivers(Request $request){
+
+
 
      return view('admin.drivers', [
           'drivers' => User::where('role' , 'driver')->withCount('assignedShipments')->get()

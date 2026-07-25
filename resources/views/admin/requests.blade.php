@@ -124,7 +124,7 @@
 
                                 <div class="flex justify-end gap-2">
 
-                                    <a href="/showAdminShipments/{{ $shipment->id }}"
+                                    <a href="{{ url('/shipments/' . $shipment->id) }}"
                                         class="rounded-lg border border-blue-100 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-600 hover:bg-blue-100">
                                         View
                                     </a>

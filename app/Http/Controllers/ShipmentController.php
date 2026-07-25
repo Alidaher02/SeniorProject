@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Shipment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
 use App\Notifications\ShipmentRequested;
 use Illuminate\Support\Str;
@@ -17,7 +18,6 @@ class ShipmentController extends Controller
      */
     public function index(Shipment $shipment , Request $request)
     {
-        Gate::authorize('shipments.shipments');
 
         $shipments = Shipment::where('customer_id' , Auth::id())
         ->when($request->status, function ($query , $status){
@@ -37,8 +37,7 @@ class ShipmentController extends Controller
      */
     public function create()
     {
-        
-     Gate::authorize('shipments.shipments');
+
 
         return view('shipments.requestShipment');
     }
@@ -48,7 +47,6 @@ class ShipmentController extends Controller
      */
     public function store(Request $request)
     {
-
     $request->validate([
         
     'product_name' => ['required', 'string', 'max:255'],
@@ -57,11 +55,13 @@ class ShipmentController extends Controller
     'destination' => ['required', 'string', 'max:255', 'different:origin'],
     'min_temperature' => ['required', 'numeric', 'between:-100,100'],
     'max_temperature' => ['required', 'numeric', 'between:-100,100', 'gte:min_temperature'],
+    'min_humidity' => ['required', 'numeric', 'between:-100,100'],
+    'max_humidity' => ['required', 'numeric', 'between:-100,100'],
     'departure_date' => ['required', 'date', 'after_or_equal:today'],
     'expected_arrival' => ['required', 'date', 'after:departure_date'],
     ]);
 
-    if (auth()->user()->shipments()->where('status', 'pending')->exists()) {
+    if (Auth::user()->shipments()->where('status', 'pending')->exists()) {
     return back()->with('error', 'You already have a pending shipment request.');
        }
 
@@ -73,16 +73,18 @@ class ShipmentController extends Controller
         'destination' => request('destination'),
         'min_temperature' => request('min_temperature'),
         'max_temperature' => request('max_temperature'),
+        'min_humidity' => request('min_humidity'),
+        'max_humidity' => request('max_humidity'),
         'departure_date' => request('departure_date'),
         'expected_arrival' => request('expected_arrival'),
         'tracking-number' => 'SHIP-' . rand(100000, 999999),
         
 
        ]);
+        return redirect('/shipments')->with('success' , 'Shipment is Created');
 
        Auth::user()->notify(new ShipmentRequested($shipment));
 
-       return redirect('/shipments')->with('success' , 'Shipment is Created');
 
 
 
@@ -93,8 +95,11 @@ class ShipmentController extends Controller
      */
     public function show(Shipment $shipment)
     {
+        
+        $sensorReading = $shipment->sensorReadings()->latest()->first();
         return view('shipments.show', [
-            'shipment' => $shipment
+            'shipment' => $shipment,
+            'sensorReading' => $sensorReading
         ]);
     }
 
@@ -111,7 +116,41 @@ class ShipmentController extends Controller
      */
     public function update(Request $request, Shipment $shipment)
     {
-        //
+
+
+     $request->validate([
+            
+    'product_name' => ['required', 'string', 'max:255'],
+    'description' => ['nullable', 'string', 'max:1000'],
+    'origin' => ['required', 'string', 'max:255'],
+    'destination' => ['required', 'string', 'max:255', 'different:origin'],
+    'min_temperature' => ['required', 'numeric', 'between:-100,100'],
+    'max_temperature' => ['required', 'numeric', 'between:-100,100', 'gte:min_temperature'],
+    'min_humidity' => ['required', 'numeric', 'between:-100,100'],
+    'max_humidity' => ['required', 'numeric', 'between:-100,100'],
+    'departure_date' => ['required', 'date', 'after_or_equal:today'],
+    'expected_arrival' => ['required', 'date', 'after:departure_date'],
+    ]);
+
+       $shipment = Auth::user()->shipments()->update([
+
+       'product_name' => request('product_name'),
+        'description' => request('description'),
+        'origin' => request('origin'),
+        'destination' => request('destination'),
+        'min_temperature' => request('min_temperature'),
+        'max_temperature' => request('max_temperature'),
+        'min_humidity' => request('min_humidity'),
+        'max_humidity' => request('max_humidity'),
+        'departure_date' => request('departure_date'),
+        'expected_arrival' => request('expected_arrival'),
+        'status' => 'pending',        
+
+       ]);
+
+
+
+       return redirect('/shipments')->with('success' , 'Shipment is Updated');
     }
 
     /**
@@ -122,5 +161,17 @@ class ShipmentController extends Controller
         $shipment->delete();
 
         return redirect('/');
+    }
+
+    public function sensorReading(Shipment $shipment){
+
+    $reading = $shipment->sensorReadings()->latest()->first();
+
+    return response()->json([
+        'temperature' => $reading?->temperature,
+        'humidity' => $reading?->humidity,
+        'created_at' => $reading?->created_at
+    ]);
+
     }
 }

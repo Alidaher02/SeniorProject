@@ -1,4 +1,4 @@
-<aside class="fixed top-0 left-0 flex h-screen w-64 flex-col border-r border-slate-200 bg-white">
+<aside class="hidden md:fixed top-0 left-0 md:flex h-screen w-64 flex-col border-r border-slate-200 bg-white">
 
     <!-- Logo -->
     <div class="flex h-16 items-center border-b border-slate-200 px-6">
@@ -26,15 +26,6 @@
             Dashboard
         </a>
 
-        <a href="/admin/approved"
- @class([
-        'mb-1 flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium text-gray-600',
-        'border-l-4  border-blue-600 bg-blue-50 px-3 text-sm font-medium text-blue-600' => request()->is('admin/approved'),
-        ])
-        >
-            <i class="fa-solid fa-box w-5 text-center text-slate-400"></i>
-            approved
-        </a>
 
         <a href="/admin/requests"
          @class([
@@ -43,6 +34,16 @@
         ])>
             <i class="fa-solid fa-clock-rotate-left w-5 text-center text-slate-400"></i>
             Shipment Requests
+        </a>
+
+        <a href="/admin/approved"
+         @class([
+        'mb-1 flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium text-gray-600',
+        'border-l-4  border-blue-600 bg-blue-50 px-3 text-sm font-medium text-blue-600' => request()->is('admin/approved'),
+        ])
+        >
+            <i class="fa-solid fa-box w-5 text-center text-slate-400"></i>
+            approved
         </a>
 
         <a href="/admin/intransit"

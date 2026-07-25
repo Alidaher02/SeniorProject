@@ -19,6 +19,8 @@ class Shipment extends Model
     'destination',
     'min_temperature',
     'max_temperature',
+    'min_humidity',
+    'max_humidity',
     'departure_date',
     'expected_arrival',
     'tracking-number',
@@ -38,5 +40,14 @@ class Shipment extends Model
 public function driver(): BelongsTo
 {
     return $this->belongsTo(User::class, 'driver_id');
+}
+
+public function sensorReadings(): HasMany
+{
+    return $this->hasMany(SensorReading::class);
+}
+public function alerts()
+{
+    return $this->hasMany(Alert::class);
 }
 }

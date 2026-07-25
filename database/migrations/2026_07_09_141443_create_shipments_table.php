@@ -36,6 +36,8 @@ return new class extends Migration
 
             $table->decimal('min_temperature', 5, 2);
             $table->decimal('max_temperature', 5, 2);
+            $table->decimal('min_humidity', 5, 2)->nullable();
+            $table->decimal('max_humidity', 5, 2)->nullable();
 
             $table->string('status')->default('pending');
             

@@ -14,7 +14,6 @@ class DriverController extends Controller
 {
     public function index(Shipment $shipment){
 
-    Gate::authorize('driver.driverDashboard');
 
     $assignedShipments = Auth::user()->assignedShipments()
     ->whereIn('status' , ['in_transit' , 'delivered'])

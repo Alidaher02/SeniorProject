@@ -40,7 +40,7 @@
 
 
         <!-- Logo -->
-        <a class="btn btn-ghost text-xl font-bold text-gray-800 hover:bg-transparent">
+        <a class="text-xl font-bold text-gray-800 hover:bg-transparent">
             <span class="text-blue-600">Cold</span>Chain
         </a>
 

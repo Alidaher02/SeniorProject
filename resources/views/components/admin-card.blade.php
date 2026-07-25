@@ -35,7 +35,7 @@
     }
 </style>
 
- <div class="rounded-lg border border-gray-200 bg-white p-3 dark:border-gray-800 dark:bg-white/[0.03]">
+ <div class="rounded-lg border border-gray-200 bg-white p-3">
     <div id="{{ $iconWrapId }}" class="flex h-9 w-9 items-center justify-center rounded-md">
         @if ($title == 'Customers')
             {{-- two people --}}
@@ -100,7 +100,7 @@
             {{ $title }}
         </span>
 
-        <h4 id="{{ $id }}" class="mt-0.5 text-lg font-semibold text-gray-800 dark:text-white/90">
+        <h4 id="{{ $id }}" class="mt-0.5 text-lg font-semibold text-gray-800 ">
             0
         </h4>
     </div>

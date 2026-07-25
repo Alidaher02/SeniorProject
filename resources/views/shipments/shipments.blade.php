@@ -1,6 +1,6 @@
 <x-layout>
 
-<div class="flex items-center gap-3 py-5">
+<div class="grid grid-cols-3 md:flex items-center gap-3 py-5">
 
     <a href="/shipments"
        class="rounded-lg border px-4 py-2 text-xs font-semibold transition

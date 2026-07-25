@@ -1,224 +1,106 @@
 <x-admin-layout>
+<!-- Alerts -->
+<div class="p-4 sm:p-5">
+
+    <!-- Desktop Table -->
+    <div class="hidden overflow-hidden rounded-xl border border-red-100 md:block">
+
+        <table class="w-full text-left">
+
+            <thead class="bg-red-50">
+                <tr>
+                    <th class="px-5 py-3 text-xs font-semibold text-red-600">Alert</th>
+                    <th class="px-5 py-3 text-xs font-semibold text-red-600">Shipment</th>
+                    <th class="px-5 py-3 text-xs font-semibold text-red-600">Reading</th>
+                    <th class="px-5 py-3 text-xs font-semibold text-red-600">Severity</th>
+                    <th class="px-5 py-3 text-xs font-semibold text-red-600">Time</th>
+                    <th class="px-5 py-3 text-xs font-semibold text-red-600">Action</th>
+                </tr>
+            </thead>
+
+            <tbody id="alertsContainer" class="divide-y divide-red-50">
 
 
-    <div class="min-h-screen p-6">
+            </tbody>
 
-        <div class="mx-auto mt-5 max-w-6xl overflow-hidden rounded-2xl border border-red-100 bg-white shadow-sm">
+        </table>
 
-            <!-- Header -->
-            <div class="flex items-center justify-between border-b border-red-100 bg-red-50 px-5 py-4">
+    </div>
+
+
+
+    <!-- Mobile Cards -->
+    <div class="space-y-3 md:hidden">
+
+        @foreach([
+            ['High Temperature','Above maximum limit','TRK-874321','12°C','Critical','2 min ago'],
+            ['Low Humidity','Below minimum range','TRK-345122','28%','Warning','8 min ago'],
+            ['GPS Signal Lost','Device disconnected','TRK-998421','—','Critical','16 min ago'],
+        ] as $alert)
+
+
+        <div class="rounded-xl border border-red-100 bg-white p-4 shadow-sm">
+
+            <div class="flex items-start justify-between">
 
                 <div>
-                    <h1 class="text-lg font-bold text-gray-800">
-                        Shipment Alerts
-                    </h1>
+                    <h3 class="text-sm font-bold text-gray-800">
+                        {{ $alert[0] }}
+                    </h3>
 
                     <p class="text-xs text-gray-400">
-                        Monitor temperature, humidity and GPS alerts
+                        {{ $alert[1] }}
                     </p>
                 </div>
 
-                <span class="rounded-lg bg-red-100 px-4 py-2 text-xs font-semibold text-red-600">
-                    3 Active Alerts
+
+                <span class="rounded-lg px-2.5 py-1 text-xs font-semibold
+                    {{ $alert[4] == 'Critical'
+                        ? 'bg-red-100 text-red-600'
+                        : 'bg-orange-100 text-orange-600' }}">
+                    {{ $alert[4] }}
                 </span>
 
             </div>
 
-            <!-- Table -->
-            <div class="p-5">
 
-                <div class="overflow-hidden rounded-xl border border-red-100">
-
-                    <table class="w-full text-left">
-
-                        <thead class="bg-red-50">
-
-                            <tr>
-
-                                <th class="px-5 py-3 text-xs font-semibold text-red-600">
-                                    Alert
-                                </th>
-
-                                <th class="px-5 py-3 text-xs font-semibold text-red-600">
-                                    Shipment
-                                </th>
-
-                                <th class="px-5 py-3 text-xs font-semibold text-red-600">
-                                    Reading
-                                </th>
-
-                                <th class="px-5 py-3 text-xs font-semibold text-red-600">
-                                    Severity
-                                </th>
-
-                                <th class="px-5 py-3 text-xs font-semibold text-red-600">
-                                    Time
-                                </th>
-
-                                <th class="px-5 py-3 text-xs font-semibold text-red-600">
-                                    Action
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody class="divide-y divide-red-50">
-
-                            <!-- Alert 1 -->
-                            <tr class="transition hover:bg-red-50/50">
-
-                                <td class="px-5 py-4">
-
-                                    <div>
-
-                                        <p class="text-sm font-semibold text-gray-800">
-                                            High Temperature
-                                        </p>
-
-                                        <p class="text-xs text-gray-400">
-                                            Above maximum limit
-                                        </p>
-
-                                    </div>
-
-                                </td>
-
-                                <td class="px-5 py-4 text-sm font-medium text-red-600">
-                                    TRK-874321
-                                </td>
-
-                                <td class="px-5 py-4 text-sm text-gray-600">
-                                    12°C
-                                </td>
-
-                                <td class="px-5 py-4">
-
-                                    <span class="rounded-lg bg-red-100 px-3 py-1 text-xs font-semibold text-red-600">
-                                        Critical
-                                    </span>
-
-                                </td>
-
-                                <td class="px-5 py-4 text-sm text-gray-500">
-                                    2 min ago
-                                </td>
-
-                                <td class="px-5 py-4">
-
-                                    <button class="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-100">
-                                        View
-                                    </button>
-
-                                </td>
-
-                            </tr>
-
-
-
-                            <!-- Alert 2 -->
-                            <tr class="transition hover:bg-red-50/50">
-
-                                <td class="px-5 py-4">
-
-                                    <div>
-
-                                        <p class="text-sm font-semibold text-gray-800">
-                                            Low Humidity
-                                        </p>
-
-                                        <p class="text-xs text-gray-400">
-                                            Below minimum range
-                                        </p>
-
-                                    </div>
-
-                                </td>
-
-                                <td class="px-5 py-4 text-sm font-medium text-red-600">
-                                    TRK-345122
-                                </td>
-
-                                <td class="px-5 py-4 text-sm text-gray-600">
-                                    28%
-                                </td>
-
-                                <td class="px-5 py-4">
-
-                                    <span class="rounded-lg bg-orange-100 px-3 py-1 text-xs font-semibold text-orange-600">
-                                        Warning
-                                    </span>
-
-                                </td>
-
-                                <td class="px-5 py-4 text-sm text-gray-500">
-                                    8 min ago
-                                </td>
-
-                                <td class="px-5 py-4">
-
-                                    <button class="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-100">
-                                        View
-                                    </button>
-
-                                </td>
-
-                            </tr>
-
-
-
-                            <!-- Alert 3 -->
-                            <tr class="transition hover:bg-red-50/50">
-
-                                <td class="px-5 py-4">
-
-                                    <div>
-
-                                        <p class="text-sm font-semibold text-gray-800">
-                                            GPS Signal Lost
-                                        </p>
-
-                                        <p class="text-xs text-gray-400">
-                                            Device disconnected
-                                        </p>
-
-                                    </div>
-
-                                </td>
-
-                                <td class="px-5 py-4 text-sm font-medium text-red-600">
-                                    TRK-998421
-                                </td>
-
-                                <td class="px-5 py-4 text-sm text-gray-600">
-                                    —
-                                </td>
-
-                                <td class="px-5 py-4">
-
-                                    <span class="rounded-lg bg-red-100 px-3 py-1 text-xs font-semibold text-red-600">
-                                        Critical
-                                    </span>
-
-                                </td>
-
-                                <td class="px-5 py-4 text-sm text-gray-500">
-                                    16 min ago
-                                </td>
-
-                                <td class="px-5 py-4">
-
-                                    <button class="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-100">
-                                        View
-                                    </button>
-
-                                </td>
-
-                            </tr>
-
-                        </tbody>
-
-                    </table>
+            <div class="mt-4 grid grid-cols-2 gap-3 text-sm">
+
+                <div>
+                    <p class="text-xs text-gray-400">
+                        Shipment
+                    </p>
+                    <p class="font-semibold text-red-600">
+                        {{ $alert[2] }}
+                    </p>
+                </div>
+
+
+                <div>
+                    <p class="text-xs text-gray-400">
+                        Reading
+                    </p>
+                    <p class="font-semibold text-gray-700">
+                        {{ $alert[3] }}
+                    </p>
+                </div>
+
+
+                <div>
+                    <p class="text-xs text-gray-400">
+                        Time
+                    </p>
+                    <p class="text-gray-600">
+                        {{ $alert[5] }}
+                    </p>
+                </div>
+
+
+                <div class="flex items-end justify-end">
+
+                    <button class="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-100">
+                        View
+                    </button>
 
                 </div>
 
@@ -226,6 +108,10 @@
 
         </div>
 
+
+        @endforeach
+
     </div>
 
+</div>
 </x-admin-layout>

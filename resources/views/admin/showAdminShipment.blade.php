@@ -233,7 +233,7 @@
 <div class="min-h-screen p-6">
 
     <!-- Main Card -->
-    <a href="/admin/shipments"
+    <a href="/admin"
    class="mb-3 px-20 inline-flex items-center gap-1 text-xs font-medium text-blue-600 transition hover:text-blue-800">
 
     <svg xmlns="http://www.w3.org/2000/svg"
@@ -249,7 +249,7 @@
 
     </svg>
 
-    Home
+    Back
 
 </a>
     <div class="mx-auto max-w-5xl rounded-2xl border border-green-100 bg-white shadow-sm">
@@ -720,7 +720,7 @@
 @if ($shipment->status === App\Enums\ShipmentStatus::IN_TRANSIT)
 
 <div class="min-h-screen p-6">
-<a href="/admin/shipments"
+<a href="/admin"
    class="mb-3 px-20 inline-flex items-center gap-1 text-xs font-medium text-blue-600 transition hover:text-blue-800">
 
     <svg xmlns="http://www.w3.org/2000/svg"
@@ -736,7 +736,7 @@
 
     </svg>
 
-    Home
+    Back
 
 </a>
     <div class="mx-auto max-w-5xl rounded-2xl border border-blue-100 bg-white shadow-sm">

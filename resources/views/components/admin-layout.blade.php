@@ -19,8 +19,10 @@
 
 
 <div id="pageContent" class="opacity-0 transition-opacity duration-500">
-@include('components.sidebar')
-<main class="ml-64 min-h-screen bg-slate-50 p-5">
+
+    @include('components.sidebar')
+
+<main class="md:ml-64 min-h-screen bg-slate-50 p-2 md:p-5">
 
 {{ $slot }}
     

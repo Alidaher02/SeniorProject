@@ -178,6 +178,14 @@
           <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
             <div>
+              <label class="mb-2 block text-sm font-semibold text-slate-800">Humidity</label>
+                <div class="grid grid-cols-2 gap-2">
+                <input type="number" name="min_humidity" placeholder="min" class="w-full rounded-lg border border-slate-200 px-2 py-2.5 text-sm placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                <input type="number" name="max_humidity" placeholder="max" class="w-full rounded-lg border border-slate-200 px-2 py-2.5 text-sm placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+              </div>
+            </div>
+
+            <div>
               <label class="mb-2 block text-sm font-semibold text-slate-800">Temperature (c)</label>
               <div class="grid grid-cols-2 gap-2">
                 <input type="number" name="min_temperature" placeholder="min" class="w-full rounded-lg border border-slate-200 px-2 py-2.5 text-sm placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
@@ -274,29 +282,8 @@
     </form>
   </main>
 
+  <div>
 
 
- {{-- <div>
-<p class="text-sm font-bold py-2">Approved Shipments: </p>
-<div class="grid place-items-center md:flex items-center gap-12">
-@foreach ($shipments as $shipment)
- @if ($shipment->status === App\Enums\ShipmentStatus::IN_TRANSIT)
-<a href="/shipments/{{ $shipment->id }}" class="shipmentCart">
- <div class="max-w-sm rounded-lg overflow-hidden shadow-lg h-[460px]">
-  <img class="w-full" src="{{ asset('images/medical.jpg') }}" alt="Sunset in the mountains">
-  <div class="px-6 py-4">
-    <div class="font-bold text-xl mb-2 line-clamp-1">{{ $shipment->product_name }}</div>
-    <p class="text-gray-700 text-xs line-clamp-3">
-        {{ $shipment->description }}
-    </p>
-  </div>
-  <div class="px-6">
-    <span class="inline-block bg-indigo-600 text-white rounded-full px-10 py-3 text-xs font-semibold mr-2 mb-2">{{ $shipment->status }}</span>
-  </div>
-</div>
-</a>
-@endif       
-@endforeach
-</div>
- </div> --}}
+
 </x-layout>    
