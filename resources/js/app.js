@@ -1,5 +1,7 @@
 import './bootstrap';
 import './admin';
+import './sensorReadings';
+
 
 
 const sendM = document.getElementById("sendM");

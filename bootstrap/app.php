@@ -17,6 +17,11 @@ return Application::configure(basePath: dirname(__DIR__))
         'driver' => \App\Http\Middleware\DriverMiddleware::class,
         'customer' => \App\Http\Middleware\ShipmentMiddleware::class,
     ]);
+
+    $middleware->validateCsrfTokens(except: [
+        'sensor/readings',
+    ]);
+    
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

@@ -810,13 +810,13 @@
                 </p>
 
                 <h1 class="text-lg font-bold text-gray-800">
-                    #TRK-892734
+                    {{ $shipment->{'tracking-number'} }}
                 </h1>
             </div>
 
 
             <span class="rounded-full bg-purple-100 px-3 py-1 text-xs font-semibold text-purple-600">
-                In Transit
+                {{ $shipment->Status }}
             </span>
 
         </div>

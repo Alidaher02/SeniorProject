@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Alert;
+use App\Models\Shipment;
 
 class AlertController extends Controller
 {
+
+
   public function loadAlerts()
 {
     $alerts = Alert::with([

@@ -163,15 +163,5 @@ class ShipmentController extends Controller
         return redirect('/');
     }
 
-    public function sensorReading(Shipment $shipment){
 
-    $reading = $shipment->sensorReadings()->latest()->first();
-
-    return response()->json([
-        'temperature' => $reading?->temperature,
-        'humidity' => $reading?->humidity,
-        'created_at' => $reading?->created_at
-    ]);
-
-    }
 }

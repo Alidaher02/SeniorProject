@@ -40,9 +40,9 @@ window.addEventListener("load", () => {
     
 
 
-    showModel(addDriver , cancelBnt , driverCard);
-    showModel(addCustomer , customerCancelBtn , customerCard);
-    showModel(editBtn , editClose , editModel);
+showModel(addDriver , cancelBnt , driverCard);
+showModel(addCustomer , customerCancelBtn , customerCard);
+showModel(editBtn , editClose , editModel);
 
 
    
@@ -95,10 +95,11 @@ stats.forEach(id => {
     }
 });
             });
-    }
 
-    loadStats();
-    setInterval(loadStats, 5000);
+}
+
+loadStats();
+setInterval(loadStats, 5000);
 
 
 function loadAlerts() {
@@ -112,50 +113,163 @@ function loadAlerts() {
             alerts.forEach(alert => {
 
                 rows += `
-                <tr class="transition hover:bg-red-50/50">
+  <tr class="group border-b border-gray-100 bg-white transition-all hover:bg-slate-50">
 
-                    <td class="px-5 py-4">
-                        <p class="text-sm font-semibold text-gray-800">
-                            ${alert.message}
-                        </p>
+    <!-- Alert Info -->
+    <td class="px-6 py-6">
 
-                        <p class="text-xs text-gray-400">
-                            ${alert.type}
-                        </p>
-                    </td>
+        <div class="flex items-center gap-4">
 
-
-                    <td class="px-5 py-4 text-sm font-medium text-red-600">
-                        ${alert.shipment['tracking-number']}
-                    </td>
+            <!-- Icon -->
+            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-red-50 text-red-600 ring-1 ring-red-100">
+                <i class="fa-solid fa-triangle-exclamation text-lg"></i>
+            </div>
 
 
-                    <td class="px-5 py-4 text-sm text-gray-600">
-                        ${alert.shipment.sensor_readings?.at(-1)?.temperature ?? 'N/A'} °C
-                    </td>
+            <div class="max-w-xs">
+
+                <h3 class="text-sm font-semibold text-slate-800">
+                    ${alert.message}
+                </h3>
+
+                <div class="mt-1 flex items-center gap-2">
+
+                    <span class="text-xs text-slate-400">
+                        ${alert.type}
+                    </span>
+
+                    <span class="h-1 w-1 rounded-full bg-slate-300"></span>
+
+                    <span class="text-xs text-slate-400">
+                        Automatic Detection
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </td>
 
 
-                    <td class="px-5 py-4">
 
-                        <span class="rounded-lg px-3 py-1 text-xs font-semibold bg-red-100 text-red-600">
-                            ${alert.severity}
-                        </span>
+    <!-- Shipment -->
+    <td class="px-6 py-6">
 
-                    </td>
+        <div class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+
+            <i class="fa-solid fa-truck-fast text-slate-400"></i>
+
+            <span class="text-xs font-semibold text-slate-700">
+                ${alert.shipment['tracking-number']}
+            </span>
+
+        </div>
+
+    </td>
 
 
-                    <td class="px-5 py-4 text-xs text-gray-600">
-                       ${alert.created_at}
-                    </td>
+
+    <!-- Temperature -->
+    <td class="px-6 py-6">
+
+        <div class="flex items-center gap-3">
+
+            <div class="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-red-50">
+
+                <i class="fa-solid fa-temperature-high text-red-500"></i>
+
+            </div>
 
 
-                    <td class="px-5 py-4">
-                        <button class="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-100">
-                            View
-                        </button>
-                    </td>
+            <div>
 
-                </tr>
+                <p class="text-lg font-bold text-red-600">
+                    ${alert.shipment.sensor_readings?.at(-1)?.temperature ?? 'N/A'}°
+                </p>
+
+                <p class="text-xs text-slate-400">
+                    Current temperature
+                </p>
+
+            </div>
+
+        </div>
+
+    </td>
+
+
+
+    <!-- Severity -->
+    <td class="px-6 py-6">
+
+        <div class="inline-flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-4 py-2">
+
+            <span class="relative flex h-2.5 w-2.5">
+
+                <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"></span>
+
+                <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500"></span>
+
+            </span>
+
+
+            <span class="text-xs font-bold uppercase tracking-wide text-red-600">
+                ${alert.severity}
+            </span>
+
+        </div>
+
+    </td>
+
+
+
+    <!-- Time -->
+    <td class="px-6 py-6">
+
+        <div>
+
+            <p class="text-sm font-medium text-slate-700">
+                ${alert.created_at}
+            </p>
+
+            <p class="mt-1 text-xs text-slate-400">
+                Alert generated
+            </p>
+
+        </div>
+
+    </td>
+
+
+
+    <!-- Action -->
+    <td class="px-6 py-6">
+
+        <button
+            class="
+            inline-flex items-center gap-2
+            rounded-xl
+            bg-slate-900
+            px-4 py-2.5
+            text-xs font-semibold
+            text-white
+            shadow-sm
+            transition-all
+            hover:bg-slate-800
+            hover:shadow-md
+            ">
+
+            <i class="fa-solid fa-arrow-right"></i>
+
+            Details
+
+        </button>
+
+    </td>
+
+</tr>
                 `;
             });
 

@@ -98,7 +98,10 @@
         'border-l-4  border-blue-600 bg-blue-50 px-3 text-sm font-medium text-blue-600' => request()->is('admin/alerts'),
         ])>
             <i class="fa-solid fa-chart-column w-5 text-center text-slate-400"></i>
-            Alerts
+            Alerts 
+            <span class="ml-auto inline-flex h-6 min-w-6 text-sm items-center justify-center rounded-full px-2  font-bold text-red-600">
+                {{ \App\Models\Alert::count() }}
+            </span>
         </a>
 
         <a href="#"
