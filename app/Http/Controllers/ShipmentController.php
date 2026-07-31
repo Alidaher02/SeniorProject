@@ -95,6 +95,8 @@ class ShipmentController extends Controller
      */
     public function show(Shipment $shipment)
     {
+        //Authorize
+        Gate::authorize('updateOrDelete' , $shipment);
         
         $sensorReading = $shipment->sensorReadings()->latest()->first();
         return view('shipments.show', [
@@ -116,6 +118,9 @@ class ShipmentController extends Controller
      */
     public function update(Request $request, Shipment $shipment)
     {
+
+            //Authorize
+        Gate::authorize('updateOrDelete' , $shipment);
 
 
      $request->validate([
@@ -158,6 +163,9 @@ class ShipmentController extends Controller
      */
     public function destroy(Shipment $shipment)
     {
+        //Authorize
+        Gate::authorize('updateOrDelete' , $shipment);
+
         $shipment->delete();
 
         return redirect('/');

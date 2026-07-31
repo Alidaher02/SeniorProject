@@ -74,6 +74,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::patch('/admin/Approvedshipments/{shipment}', [AdminController::class, 'updateApproved']);
     Route::get('/alerts', [AlertController::class, 'loadAlerts']);
 
+    Route::get('/alerts/count' , [AlertController::class , 'alertCounts']);
+
 
 
 });

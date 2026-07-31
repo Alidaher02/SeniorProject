@@ -23,6 +23,7 @@ return new class extends Migration
             'medium',
             'high'
         ])->default('low');
+            $table->string('status')->default('active');
             $table->boolean('is_read')->default(false);
             $table->timestamps();
         });

@@ -16,6 +16,7 @@ class AlertController extends Controller
         'shipment',
         'shipment.sensorReadings'
     ])
+    ->where('status' , 'active')
     ->latest()
     ->get();
 
@@ -28,6 +29,15 @@ class AlertController extends Controller
             'shipment' => $alert->shipment,
         ];
     }));
+}
+
+public function alertCounts()
+{
+    $count = Alert::where('status' , 'active')->count();
+
+    return response()->json([
+        'count' => $count
+    ]);
 }
 
 }

@@ -113,53 +113,55 @@ function loadAlerts() {
             alerts.forEach(alert => {
 
                 rows += `
-  <tr class="group border-b border-gray-100 bg-white transition-all hover:bg-slate-50">
+<tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
 
-    <!-- Alert Info -->
-    <td class="px-6 py-6">
+    <!-- Alert -->
+    <td class="px-4 py-3">
+        <div class="flex items-center gap-3">
 
-        <div class="flex items-center gap-4">
+        <div class="flex h-9 w-9 items-center justify-center rounded-full bg-red-100">
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4 text-red-600"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2">
 
-            <!-- Icon -->
-            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-red-50 text-red-600 ring-1 ring-red-100">
-                <i class="fa-solid fa-triangle-exclamation text-lg"></i>
-            </div>
+                <circle cx="12" cy="12" r="9"></circle>
+                <path d="M12 7v6"></path>
+                <circle cx="12" cy="17" r="1"></circle>
 
+            </svg>
+        </div>
 
-            <div class="max-w-xs">
-
-                <h3 class="text-sm font-semibold text-slate-800">
+            <div>
+                <p class="text-sm font-semibold text-slate-800">
                     ${alert.message}
-                </h3>
+                </p>
 
-                <div class="mt-1 flex items-center gap-2">
+                <div class="mt-0.5 flex items-center gap-2">
 
-                    <span class="text-xs text-slate-400">
+                    <span class="rounded-full bg-red-50 px-2 py-0.5 text-[10px] font-medium uppercase text-red-600">
                         ${alert.type}
                     </span>
 
-                    <span class="h-1 w-1 rounded-full bg-slate-300"></span>
-
-                    <span class="text-xs text-slate-400">
-                        Automatic Detection
+                    <span class="text-[11px] text-slate-400">
+                        Auto
                     </span>
 
                 </div>
-
             </div>
 
         </div>
-
     </td>
 
-
-
     <!-- Shipment -->
-    <td class="px-6 py-6">
+    <td class="px-4 py-3">
 
-        <div class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+        <div class="inline-flex items-center gap-2 rounded-lg bg-slate-100 px-3 py-1.5">
 
-            <i class="fa-solid fa-truck-fast text-slate-400"></i>
+            <i class="fa-solid fa-truck-fast text-xs text-slate-500"></i>
 
             <span class="text-xs font-semibold text-slate-700">
                 ${alert.shipment['tracking-number']}
@@ -169,103 +171,42 @@ function loadAlerts() {
 
     </td>
 
-
-
     <!-- Temperature -->
-    <td class="px-6 py-6">
+    <td class="px-4 py-3">
 
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2">
 
-            <div class="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-red-50">
+            <i class="fa-solid fa-temperature-high text-red-500"></i>
 
-                <i class="fa-solid fa-temperature-high text-red-500"></i>
-
-            </div>
-
-
-            <div>
-
-                <p class="text-lg font-bold text-red-600">
-                    ${alert.shipment.sensor_readings?.at(-1)?.temperature ?? 'N/A'}°
-                </p>
-
-                <p class="text-xs text-slate-400">
-                    Current temperature
-                </p>
-
-            </div>
+            <span class="text-lg font-bold text-red-600">
+                ${alert.shipment.sensor_readings?.at(-1)?.temperature ?? 'N/A'}°
+            </span>
 
         </div>
 
     </td>
 
-
-
     <!-- Severity -->
-    <td class="px-6 py-6">
+    <td class="px-4 py-3">
 
-        <div class="inline-flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-4 py-2">
+        <span class="inline-flex items-center gap-2 rounded-full bg-red-50 px-3 py-1">
 
-            <span class="relative flex h-2.5 w-2.5">
+            <span class="h-2 w-2 rounded-full bg-red-500 animate-pulse"></span>
 
-                <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"></span>
-
-                <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500"></span>
-
-            </span>
-
-
-            <span class="text-xs font-bold uppercase tracking-wide text-red-600">
+            <span class="text-[11px] font-semibold uppercase text-red-600">
                 ${alert.severity}
             </span>
 
-        </div>
+        </span>
 
     </td>
-
-
 
     <!-- Time -->
-    <td class="px-6 py-6">
+    <td class="px-4 py-3">
 
-        <div>
-
-            <p class="text-sm font-medium text-slate-700">
-                ${alert.created_at}
-            </p>
-
-            <p class="mt-1 text-xs text-slate-400">
-                Alert generated
-            </p>
-
-        </div>
-
-    </td>
-
-
-
-    <!-- Action -->
-    <td class="px-6 py-6">
-
-        <button
-            class="
-            inline-flex items-center gap-2
-            rounded-xl
-            bg-slate-900
-            px-4 py-2.5
-            text-xs font-semibold
-            text-white
-            shadow-sm
-            transition-all
-            hover:bg-slate-800
-            hover:shadow-md
-            ">
-
-            <i class="fa-solid fa-arrow-right"></i>
-
-            Details
-
-        </button>
+        <span class="text-xs text-slate-500">
+            ${alert.created_at}
+        </span>
 
     </td>
 
@@ -276,11 +217,22 @@ function loadAlerts() {
             document.getElementById('alertsContainer').innerHTML = rows;
 
         });
+
+    
 }
 
 
 loadAlerts();
 
-setInterval(() => {
-    loadAlerts();
-}, 5000);
+setInterval(loadAlerts, 1000);
+
+async function alertsCount() {
+    
+    let response = await fetch('/alerts/count');
+    let data = await response.json();
+
+    document.getElementById("alertsCount").textContent = data.count;
+}
+
+alertsCount();  
+setInterval(alertsCount, 1000);

@@ -99,8 +99,8 @@
         ])>
             <i class="fa-solid fa-chart-column w-5 text-center text-slate-400"></i>
             Alerts 
-            <span class="ml-auto inline-flex h-6 min-w-6 text-sm items-center justify-center rounded-full px-2  font-bold text-red-600">
-                {{ \App\Models\Alert::count() }}
+            <span id="alertsCount" class="ml-auto inline-flex h-6 min-w-6 text-sm items-center justify-center rounded-full px-2  font-bold text-red-600">
+                
             </span>
         </a>
 

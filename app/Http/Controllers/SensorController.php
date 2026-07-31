@@ -49,6 +49,13 @@ public function storeReadings(Request $request)
 
     // Check temperature limit
 
+    if($reading->temperature > $shipment->min_temperature && $reading->temperature < $shipment->max_temperature)
+    {
+        $shipment->alerts()->update([
+            'status' => 'resolved'
+        ]);
+    }
+
     if($reading->temperature > $shipment->max_temperature)
     {
         $shipment->alerts()->delete();
@@ -56,7 +63,7 @@ public function storeReadings(Request $request)
         $shipment->alerts()->create([
 
             'type' => 'Temperature High',
-
+            'severity' => 'high',
             'message' =>
             "Temperature reached {$reading->temperature}°C. Maximum allowed is {$shipment->max_temperature}°C."
 
