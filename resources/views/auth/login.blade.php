@@ -38,6 +38,32 @@
                 Login
             </button>
             <p class="text-gray-500/90 text-sm mt-4">Don’t have an account? <a class="text-indigo-500 hover:underline" href="/register">Sign up</a></p>
+       <div class="my-5 flex items-center gap-3">
+    <div class="h-px bg-gray-300 flex-1"></div>
+    <span class="text-gray-400 text-sm">OR</span>
+    <div class="h-px bg-gray-300 flex-1"></div>
+</div>
+
+
+<a href="{{ route('google.login') }}"
+   class="w-full flex items-center justify-center gap-3 
+          bg-white text-gray-800 
+          border border-gray-300
+          py-3 rounded-xl
+          font-semibold
+          hover:bg-gray-100
+          transition">
+
+    <svg class="w-5 h-5" viewBox="0 0 24 24">
+        <path fill="#4285F4" d="M21.35 12.23c0-.78-.07-1.54-.22-2.27H12v4.3h5.25a4.5 4.5 0 0 1-1.95 2.95v2.45h3.16c1.85-1.7 2.89-4.2 2.89-7.43z"/>
+        <path fill="#34A853" d="M12 21.5c2.7 0 4.97-.9 6.63-2.44l-3.16-2.45c-.88.6-2 1-3.47 1-2.67 0-4.93-1.8-5.74-4.22H3v2.52A10 10 0 0 0 12 21.5z"/>
+        <path fill="#FBBC05" d="M6.26 13.39a6 6 0 0 1 0-3.78V7.09H3a10 10 0 0 0 0 9.82l3.26-2.52z"/>
+        <path fill="#EA4335" d="M12 6.4c1.55 0 2.94.53 4.04 1.57l3.03-3.03C16.96 3.35 14.7 2.5 12 2.5A10 10 0 0 0 3 7.09l3.26 2.52C7.07 8.2 9.33 6.4 12 6.4z"/>
+    </svg>
+
+    Continue with Google
+
+</a>
         </form>
     </div>
 </div>

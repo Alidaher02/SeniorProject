@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use App\Notifications\ShipmentApproved;
 
 
 class AdminController extends Controller
@@ -200,6 +201,8 @@ class AdminController extends Controller
         $shipment->update([
             'status' => ShipmentStatus::APPROVED
         ]);
+
+        $shipment->customer->notify(new ShipmentApproved($shipment));
 
             return back()->with('success', 'Shipment approved!');
 

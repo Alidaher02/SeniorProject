@@ -35,32 +35,31 @@ public function login(Request $request)
             return redirect('/driver')->with('success', 'Welcome Driver!');
         }
 
-        return redirect()->intended('/')->with('success', 'You are logged in!');    }
+        return redirect()->intended('/shipments')->with('success', 'You are logged in!');    }
 
      
 
-    public function register(Request $request){
-
-   
-
-          $request->validate([
-
-        'name' => ['required' , 'string' , 'max:255'],
-        'email' => ['required' , 'string' , 'email' , 'max:255' , 'unique:users'],
-        'password' => ['required' , 'string' , Password::default()]
-
-      ]);
+  public function register(Request $request)
+{
+    $request->validate([
+        'name' => ['required', 'string', 'max:255'],
+        'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+        'password' => ['required', 'string', Password::default()]
+    ]);
 
 
-     $user = User::create([
-        'name' => request('name'),
-        'email' => request('email'),
+    $user = User::create([
+        'name' => $request->name,
+        'email' => $request->email,
         'password' => Hash::make($request->password)
-     ]);
+    ]);
 
-      Auth::login($user);
 
-      return redirect('/')->with('success' , 'Your Successfully Registered!');
-    }
+    Auth::login($user);
+
+
+
+   return redirect('/shipments');
+}
 
 }

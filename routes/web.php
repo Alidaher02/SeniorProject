@@ -10,7 +10,8 @@ use App\Http\Controllers\ShipmentController;
 use App\Http\Controllers\SensorController;
 use App\Http\Controllers\Driver\DriverController;
 use App\Http\Controllers\AlertController;
-
+use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\Auth\EmailVerificationController;
 
 
 
@@ -78,6 +79,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
 
 
+
 });
 // Route::get('/showAdminShipments/{shipment}' , [AdminController::class , 'showAdminShipments'])->middleware('auth');
 Route::get('/shipments/{shipment}' , [ShipmentController::class , 'show'])->middleware('auth');
@@ -86,4 +88,9 @@ Route::post('/chat', [ChatController::class, 'chat'])->middleware('auth');
 
 Route::post('/sensor/readings', [SensorController::class, 'storeReadings']);
 
-    
+Route::get('/auth/google', [GoogleController::class, 'redirect'])->name('google.login');
+
+Route::get('/auth/google/callback', [GoogleController::class, 'callback']);
+
+
+

@@ -1322,7 +1322,7 @@ if (data.humidity > {{ $shipment->max_humidity }} + 10) {
 }
 
 loadReading();
-setInterval(loadReading, 5000);
+setInterval(loadReading, 1000);
 
 </script>
 
