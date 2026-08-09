@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sensor_readings', function (Blueprint $table) {
+        Schema::create('gps_readings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('shipment_id')
-            ->constrained()
-            ->cascadeOnDelete();
-            $table->decimal('temperature', 5, 2);
-            $table->decimal('humidity', 5, 2);
+              ->constrained()
+              ->cascadeOnDelete();
+
+            $table->decimal('latitude', 10, 7);
+            $table->decimal('longitude', 10, 7);
+            
             $table->timestamps();
         });
     }
@@ -27,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sensor_readings');
+        Schema::dropIfExists('gps_readings');
     }
 };

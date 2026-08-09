@@ -130,25 +130,4 @@ new ApexCharts(document.querySelector("#shipmentChart"), options).render();
 </script>
 
 
-{{-- <div class="mt-5">
-<div class="grid md:grid-cols-4 gap-3">
-@forelse ($shipments as $shipment)
-    
-       <x-shipment-card
-        status="{{ $shipment->status }}"
-        title="{{ $shipment->product_name }}"
-        origin="{{ $shipment->origin }}"
-        destination="{{ $shipment->destination }}"
-        shipmentId="{{ $shipment->{'tracking-number'} }}"
-        detailsUrl="{{ url('/showAdminShipments/' . $shipment->id) }}"
-        />   
-    
-    
-@empty
-  <h4>No Shipments.</h4>
-@endforelse
-</div>
-
-</div> --}}
-
 </x-admin-layout>

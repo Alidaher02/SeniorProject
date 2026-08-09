@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
 use App\Notifications\ShipmentRequested;
+use App\Models\Alert;
 use Illuminate\Support\Str;
 
 
@@ -20,6 +21,8 @@ class SensorController extends Controller
     return response()->json([
         'temperature' => $reading?->temperature,
         'humidity' => $reading?->humidity,
+        'tilt' => $reading?->tilt,
+        'light' => $reading?->light,
         'created_at' => $reading?->created_at
     ]);
 
@@ -29,69 +32,41 @@ public function storeReadings(Request $request)
 {
     $shipment = Shipment::find($request->shipment_id);
 
-
-    if(!$shipment)
+    if(! $shipment)
     {
         return response()->json([
-            'message' => 'Shipment not found'
+            'message' => 'Shipment not found!'
         ], 404);
     }
 
+    $reading = $shipment->sensorReadings()->latest()->first();
 
-    // Save sensor reading first
-
-    $reading = $shipment->sensorReadings()->create([
-        'temperature' => $request->temperature,
-        'humidity' => $request->humidity,
-    ]);
-
-
-
-    // Check temperature limit
-
-    if($reading->temperature > $shipment->min_temperature && $reading->temperature < $shipment->max_temperature)
+    if($reading)
     {
-        $shipment->alerts()->update([
-            'status' => 'resolved'
+        $reading->update([
+            'temperature' => $request->temperature,
+            'humidity' => $request->humidity,
+            'tilt' => $request->tilt,
+            'light' => $request->light
+        ]);
+    }
+    else
+    {
+        $reading = $shipment->sensorReadings()->create([
+            'temperature' => $request->temperature,
+            'humidity' => $request->humidity,
+            'tilt' => $request->tilt,
+            'light' => $request->light
         ]);
     }
 
-    if($reading->temperature > $shipment->max_temperature)
-    {
-        $shipment->alerts()->delete();
-        
-        $shipment->alerts()->create([
-
-            'type' => 'Temperature High',
-            'severity' => 'high',
-            'message' =>
-            "Temperature reached {$reading->temperature}°C. Maximum allowed is {$shipment->max_temperature}°C."
-
-        ]);
-    }
+    app(\App\Services\ShipmentMonitoringService::class)
+    ->analyze($reading);
 
 
-    // Check low temperature
-
-    if($reading->temperature < $shipment->min_temperature)
-    {
-        $shipment->alerts()->delete();
-
-        $shipment->alerts()->create([
-
-            'type' => 'Temperature Low',
-
-            'message' =>
-            "Temperature reached {$reading->temperature}°C. Minimum allowed is {$shipment->min_temperature}°C."
-
-        ]);
-    }
-
-
-
-    return response()->json([
+        return response()->json([
         'message' => 'Sensor Data Received!',
         'reading' => $reading
-    ]);
+    ]); 
 }
 }

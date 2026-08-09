@@ -59,89 +59,18 @@
 <!-- Floating Button -->
 @auth
     @if (Auth::user()->role === 'customer')
-<button
-    id="chatBtn"
+<a
+    href="/ai-assistant"
     class="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center
     rounded-full bg-blue-600 text-white shadow-xl shadow-blue-200  cursor-pointer
     transition hover:bg-blue-700">
 
     <i class="fa-solid fa-message text-xl"></i>
 
-</button>
-
-
-<div
-    id="chatModel"
-    class="hidden fixed bottom-24 right-6 z-40 h-[520px] w-[360px]
-    rounded-3xl border border-blue-100 bg-white p-5 shadow-2xl">
-
-
-    <!-- Header -->
-
-    <div class="flex flex-col border-b border-blue-100 pb-4">
-
-        <div class="flex items-center justify-between gap-3">
+</a>
 
 
 
-            <div>
-
-                <h2 class="text-sm font-semibold text-slate-800">
-                    ShipTrack AI
-                </h2>
-
-                <p class="text-xs text-slate-500">
-                    Your shipment assistant
-                </p>
-
-            </div>
-
-            <div id="chatClose" class="text-blue-600 text-2xl cursor-pointer">x</div>
-
-        </div>
-
-    </div>
-
-
-
-    <!-- Chat Container -->
-
-    <!-- Messages -->
-<div id="messages" class="h-[380px] overflow-y-auto py-4">
-
-</div>
-
-
-<!-- Input -->
-<div class="border-t border-blue-100 pt-4">
-
-    <div class="flex gap-2">
-
-        <input
-            id="message"
-            class="h-10 flex-1 rounded-xl border border-blue-100
-            bg-blue-50 px-3 text-sm outline-none
-            focus:border-blue-400"
-            placeholder="Type your message">
-
-
-        <button
-            id="sendM"
-            type="submit"
-            class="flex h-10 w-10 items-center justify-center
-            rounded-xl bg-blue-600 text-white cursor-pointer
-            transition hover:bg-blue-700">
-
-            <i class="fa-solid fa-paper-plane text-sm"></i>
-
-        </button>
-
-    </div>
-
-</div>
-
-
-</div>
     
 <!-- Chat Window -->
 @endif

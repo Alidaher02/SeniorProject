@@ -44,6 +44,11 @@ class User extends Authenticatable implements MustVerifyEmail
          return $this->hasMany(Shipment::class , 'driver_id');
     }
 
+    public function messages()
+    {
+        return $this->hasMany(ChatMessage::class, 'customer_id');
+    }
+
     public function isAdmin(){
         
         return $this->role === 'admin';

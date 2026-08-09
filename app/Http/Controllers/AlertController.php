@@ -10,33 +10,33 @@ class AlertController extends Controller
 {
 
 
-  public function loadAlerts()
-{
-    $alerts = Alert::with([
-        'shipment',
-        'shipment.sensorReadings'
-    ])
-    ->where('status' , 'active')
-    ->latest()
-    ->get();
+        public function alerts(Request $request)
+        {
+            $status = $request->status;
 
-    return response()->json($alerts->map(function ($alert) {
-        return [
-            'message' => $alert->message,
-            'type' => $alert->type,
-            'severity' => $alert->severity,
-            'created_at' => $alert->created_at->diffForHumans(),
-            'shipment' => $alert->shipment,
-        ];
-    }));
-}
+            $alerts = Alert::with(['shipment.sensorReadings'])
+                ->when($status, function ($query) use ($status) {
+                    $query->where('status', $status);
+                })
+                ->latest()
+                ->get();
+
+            return response()->json([
+                'alerts' => $alerts
+            ]);
+        }
 
 public function alertCounts()
 {
-    $count = Alert::where('status' , 'active')->count();
+    $countActive = Alert::where('status' , 'active')->count();
+    $countResolved = Alert::where('status' , 'resolved')->count();
+    $totalCount = Alert::count();
 
     return response()->json([
-        'count' => $count
+        'countActive' => $countActive,
+        'countResolved' => $countResolved,
+        'totalCount' => $totalCount
+
     ]);
 }
 

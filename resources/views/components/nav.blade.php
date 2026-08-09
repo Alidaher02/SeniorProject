@@ -30,6 +30,7 @@
                         Request Shipment
                     </a>
                 </li>
+
                  <li>
                     <a href="/admin" class="rounded-lg hover:bg-blue-50 hover:text-blue-600">
                         admin
@@ -66,6 +67,11 @@
                     class="cursor-pointer rounded-lg text-sm font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600">
                     Request Shipment
                 </a>
+            </li>
+            <li>
+                    <a href="/ai-assistant" class="cursor-pointer rounded-lg text-sm font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600">
+                        Ai Assistant
+                    </a>
             </li>
             @endif
 

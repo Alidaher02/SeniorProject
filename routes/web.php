@@ -6,14 +6,16 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\SessionsController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\SettingsController;
+use App\Http\Controllers\AI\AIController;
 use App\Http\Controllers\ShipmentController;
 use App\Http\Controllers\SensorController;
 use App\Http\Controllers\Driver\DriverController;
 use App\Http\Controllers\AlertController;
 use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\ShipmentReportController;
 use App\Http\Controllers\Auth\EmailVerificationController;
-
-
+use App\Http\Controllers\Gps\gpsController;
 
 Route::redirect('/' , '/shipments');
 
@@ -21,6 +23,8 @@ Route::middleware(['auth', 'customer'])->group(function () {
 
 
 Route::get('/shipments' , [ShipmentController::class , 'index'])->middleware('auth');
+Route::get('/shipments/load' , [ShipmentController::class , 'load']);
+Route::get('/shipments/status' , [ShipmentController::class , 'filterStatus']);
 Route::get('/shipments/request' , [ShipmentController::class , 'create'])->middleware('auth');
 Route::post('/shipments/request' , [ShipmentController::class , 'store'])->middleware('auth');
 Route::patch('/shipments/{shipment}' , [ShipmentController::class , 'update'])->middleware('auth');
@@ -73,18 +77,16 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::patch('/admin/shipments/{shipment}', [AdminController::class, 'updatePending']);
     Route::patch('/admin/Rejectshipments/{shipment}', [AdminController::class, 'rejectShipment']);
     Route::patch('/admin/Approvedshipments/{shipment}', [AdminController::class, 'updateApproved']);
-    Route::get('/alerts', [AlertController::class, 'loadAlerts']);
+    Route::get('/alerts', [AlertController::class, 'alerts']);
 
     Route::get('/alerts/count' , [AlertController::class , 'alertCounts']);
 
-
+    Route::get('/admin/settings' ,[SettingsController::class , 'index']);
 
 
 });
 // Route::get('/showAdminShipments/{shipment}' , [AdminController::class , 'showAdminShipments'])->middleware('auth');
 Route::get('/shipments/{shipment}' , [ShipmentController::class , 'show'])->middleware('auth');
-
-Route::post('/chat', [ChatController::class, 'chat'])->middleware('auth');
 
 Route::post('/sensor/readings', [SensorController::class, 'storeReadings']);
 
@@ -93,4 +95,18 @@ Route::get('/auth/google', [GoogleController::class, 'redirect'])->name('google.
 Route::get('/auth/google/callback', [GoogleController::class, 'callback']);
 
 
+Route::get('/shipments/{shipment}/pdf' , [ShipmentReportController::class , 'generatePDF'])
+->name('shipment.pdf');
 
+Route::get('/shipments/{shipment}/email', [ShipmentReportController::class, 'emailPDF'])
+    ->name('shipment.email');
+
+Route::get('/ai-assistant' , [AIController::class , 'index']);
+Route::post('/ai/chat' , [AIController::class , 'chat']);
+Route::get('/chat/history' , [AIController::class , 'history']);
+
+Route::post('/gps/readings' , [gpsController::class , 'store']);
+
+Route::get('/gps/readings/{shipment}' , [gpsController::class , 'latest']);
+
+Route::get('/gps/address/{shipment}', [gpsController::class, 'address']);

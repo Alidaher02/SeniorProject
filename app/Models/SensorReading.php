@@ -13,6 +13,8 @@ class SensorReading extends Model
         'shipment_id',
         'temperature',
         'humidity',
+        'tilt',
+        'light',
 
     ];
 

@@ -6,7 +6,6 @@ namespace App\Services;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use App\Services\AuthClass;
 use App\Models\User;
 use Illuminate\Validation\Rules\Password;
 

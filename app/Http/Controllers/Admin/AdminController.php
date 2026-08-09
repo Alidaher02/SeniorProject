@@ -194,6 +194,7 @@ class AdminController extends Controller
      'in_transit' => Shipment::where('status' , 'in_transit')->count(),
      'rejected' => Shipment::where('status' , 'rejected')->count(),
      'totalCustomers' => User::where('role' , 'customer')->count(),
+     'alerts' => Alert::where('status' , 'active')->count()
     ]);
    }
     public function updatePending(Request $request, Shipment $shipment)

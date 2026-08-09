@@ -50,4 +50,10 @@ public function alerts()
 {
     return $this->hasMany(Alert::class);
 }
+
+public function gpsReadings()
+{
+    return $this->hasMany(GpsReading::class);
+}
+
 }

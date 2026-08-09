@@ -19,17 +19,34 @@ class ShipmentController extends Controller
     public function index(Shipment $shipment , Request $request)
     {
 
-        $shipments = Shipment::where('customer_id' , Auth::id())
-        ->when($request->status, function ($query , $status){
-              $query->where('status' , $status);
-        })
-        ->latest()
-        ->get();
 
 
-        return view('shipments.shipments' , [
-          'shipments' => $shipments
+        return view('shipments.shipments');
+    }
+
+    public function load()
+    {
+        $shipments = Auth::user()->shipments()->latest()->get();
+        
+        return response()->json([
+            'shipments' => $shipments
         ]);
+    }
+
+    public function filterStatus(Request $request)
+    {
+
+        $shipments = Auth::user()->shipments()
+            ->when($request->filled('status'), function ($query) use ($request) {
+                $query->where('status', $request->status);
+            })
+            ->latest()
+            ->get();
+
+
+        return response()->json($shipments);
+
+
     }
 
     /**
@@ -45,6 +62,8 @@ class ShipmentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+
+
     public function store(Request $request)
     {
     $request->validate([
@@ -137,7 +156,7 @@ class ShipmentController extends Controller
     'expected_arrival' => ['required', 'date', 'after:departure_date'],
     ]);
 
-       $shipment = Auth::user()->shipments()->update([
+       $shipment->update([
 
        'product_name' => request('product_name'),
         'description' => request('description'),

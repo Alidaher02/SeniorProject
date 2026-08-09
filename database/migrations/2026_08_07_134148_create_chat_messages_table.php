@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sensor_readings', function (Blueprint $table) {
+        Schema::create('chat_messages', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('shipment_id')
-            ->constrained()
+            $table->foreignId('customer_id')
+            ->constrained('users')
             ->cascadeOnDelete();
-            $table->decimal('temperature', 5, 2);
-            $table->decimal('humidity', 5, 2);
+            $table->text('message');
+            $table->longText('ai_response');
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sensor_readings');
+        Schema::dropIfExists('chat_messages');
     }
 };
