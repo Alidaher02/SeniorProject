@@ -104,8 +104,11 @@
             </span>
         </a>
 
-        <a href="#"
-            class="mb-1 flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900">
+        <a href="/admin/settings"
+                @class([
+        'mb-1 flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium text-gray-600',
+        'border-l-4  border-blue-600 bg-blue-50 px-3 text-sm font-medium text-blue-600' => request()->is('admin/settings'),
+        ])>
             <i class="fa-solid fa-gear w-5 text-center text-slate-400"></i>
             Settings
         </a>

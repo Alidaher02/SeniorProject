@@ -3,6 +3,7 @@ import './shipments/cancelBtn'
 import './admin/addUser'
 import './admin/stats';
 import './admin/alerts';
+import './admin/settings';
 import './shipments/ai-assistant';
 import './gps/location';
 

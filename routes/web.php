@@ -82,7 +82,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/alerts/count' , [AlertController::class , 'alertCounts']);
 
     Route::get('/admin/settings' ,[SettingsController::class , 'index']);
-
+    Route::patch('/profile' , [SettingsController::class , 'update']);
 
 });
 // Route::get('/showAdminShipments/{shipment}' , [AdminController::class , 'showAdminShipments'])->middleware('auth');

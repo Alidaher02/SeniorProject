@@ -102,4 +102,5 @@ class gpsController extends Controller
         'location' => $location,
     ]);
     }
-}
+    
+    }

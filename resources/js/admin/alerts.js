@@ -4,15 +4,12 @@ document.addEventListener("DOMContentLoaded", function () {
 const container = document.getElementById("AlertsContainer");
 
 if (!container) {
-
-        console.log("AlertsContainer not found");
         return;
 }
 window.alerts = async function() {
     try {
     const response = await axios.get('/alerts?status=active');
     const alerts = response.data.alerts;
-    console.log(alerts);
     renderAlerts(alerts); 
     countAlerts();      
     } catch (error) {

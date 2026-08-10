@@ -2,7 +2,7 @@ import axios from "axios";
 
 if(! document.getElementById("chatMessages"))
 {
-    console.log("container not found");
+    console.log();
 }
 else
 {
