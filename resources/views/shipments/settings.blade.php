@@ -1,4 +1,4 @@
-<x-admin-layout>
+<x-layout>
 
     <div class="grid grid-cols-1  gap-x-8 gap-y-6 max-w-6xl mx-auto">
 
@@ -864,4 +864,4 @@
 <div id="profileMessage" class="bg-green-500 text-sm fixed bottom-0 right-0 text-white p-4 rounded-lg m-4 hidden">
 </div>
 
-</x-admin-layout>
+</x-layout>

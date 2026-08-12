@@ -73,6 +73,11 @@
                         Ai Assistant
                     </a>
             </li>
+            <li>
+                    <a href="/shipments/settings" class="cursor-pointer rounded-lg text-sm font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600">
+                        Settings
+                    </a>
+            </li>
             @endif
 
 

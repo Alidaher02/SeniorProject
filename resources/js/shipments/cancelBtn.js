@@ -17,9 +17,9 @@ window.addEventListener('click', (event) => {
     const editBtn = document.querySelectorAll(".editBtn");
     const editModel = document.getElementById("editModel");
     const editClose = document.getElementById("editClose");
-    if(editBtn && editModel && editClose)
+    if(editBtn.length > 0   && editModel && editClose)
     {
-        showModel(editBtn.length > 0  , editClose , editModel);
+        showModel(editBtn, editClose , editModel);
     }
 
 

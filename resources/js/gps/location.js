@@ -50,7 +50,7 @@ async function latest() {
 
     const latitude = parseFloat(reading.latitude);
     const longitude = parseFloat(reading.longitude);
-      address(shipmentId);
+    address(shipmentId);
 
     if (!map) {
 

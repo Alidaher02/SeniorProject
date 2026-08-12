@@ -4,6 +4,7 @@ import './admin/addUser'
 import './admin/stats';
 import './admin/alerts';
 import './admin/settings';
+import './admin/aiAnalayze';
 import './shipments/ai-assistant';
 import './gps/location';
 

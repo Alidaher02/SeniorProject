@@ -17,7 +17,7 @@
         <!-- Active -->
         <a href="/admin"
             @class([
-        'mb-1 flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium text-gray-600',
+        'mb-1 flex h-9 items-center gap-3 rounded-lg px-3 text-sm font-medium text-gray-600',
         'border-l-4  border-blue-600 bg-blue-50 px-3 text-sm font-medium text-blue-600' => request()->is('admin'),
         ])
             >
@@ -26,10 +26,20 @@
             Dashboard
         </a>
 
+        <a href="/admin/ai-assistant"
+            @class([
+        'mb-1 flex h-9 items-center gap-3 rounded-lg px-3 text-sm font-medium text-gray-600',
+        'border-l-4  border-blue-600 bg-blue-50 px-3 text-sm font-medium text-blue-600' => request()->is('admin/ai-assistant'),
+        ])
+            >
+
+            <i class="fa-solid fa-chart-line w-5 text-center"></i>
+           AI Insights
+        </a>
 
         <a href="/admin/requests"
          @class([
-        'mb-1 flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium text-gray-600',
+        'mb-1 flex h-9 items-center gap-3 rounded-lg px-3 text-sm font-medium text-gray-600',
         'border-l-4  border-blue-600 bg-blue-50 px-3 text-sm font-medium text-blue-600' => request()->is('admin/requests'),
         ])>
             <i class="fa-solid fa-clock-rotate-left w-5 text-center text-slate-400"></i>
@@ -38,7 +48,7 @@
 
         <a href="/admin/approved"
          @class([
-        'mb-1 flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium text-gray-600',
+        'mb-1 flex h-9 items-center gap-3 rounded-lg px-3 text-sm font-medium text-gray-600',
         'border-l-4  border-blue-600 bg-blue-50 px-3 text-sm font-medium text-blue-600' => request()->is('admin/approved'),
         ])
         >
@@ -48,7 +58,7 @@
 
         <a href="/admin/intransit"
         @class([
-        'mb-1 flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium text-gray-600',
+        'mb-1 flex h-9 items-center gap-3 rounded-lg px-3 text-sm font-medium text-gray-600',
         'border-l-4  border-blue-600 bg-blue-50 px-3 text-sm font-medium text-blue-600' => request()->is('admin/intransit'),
         ])
         >
@@ -58,7 +68,7 @@
 
         <a href="/admin/delivered"
             @class([
-        'mb-1 flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium text-gray-600',
+        'mb-1 flex h-9 items-center gap-3 rounded-lg px-3 text-sm font-medium text-gray-600',
         'border-l-4  border-blue-600 bg-blue-50 px-3 text-sm font-medium text-blue-600' => request()->is('admin/delivered'),
         ])
         >
@@ -74,7 +84,7 @@
 
         <a href="/admin/customers"
         @class([
-        'mb-1 flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium text-gray-600',
+        'mb-1 flex h-9 items-center gap-3 rounded-lg px-3 text-sm font-medium text-gray-600',
         'border-l-4  border-blue-600 bg-blue-50 px-3 text-sm font-medium text-blue-600' => request()->is('admin/customers'),
         ])
         >
@@ -84,7 +94,7 @@
 
         <a href="/admin/drivers"
         @class([
-        'mb-1 flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium text-gray-600',
+        'mb-1 flex h-9 items-center gap-3 rounded-lg px-3 text-sm font-medium text-gray-600',
         'border-l-4  border-blue-600 bg-blue-50 px-3 text-sm font-medium text-blue-600' => request()->is('admin/drivers'),
         ])
         >
@@ -94,7 +104,7 @@
 
         <a href="/admin/alerts"
         @class([
-        'mb-1 flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium text-gray-600',
+        'mb-1 flex h-9 items-center gap-3 rounded-lg px-3 text-sm font-medium text-gray-600',
         'border-l-4  border-blue-600 bg-blue-50 px-3 text-sm font-medium text-blue-600' => request()->is('admin/alerts'),
         ])>
             <i class="fa-solid fa-chart-column w-5 text-center text-slate-400"></i>
@@ -106,7 +116,7 @@
 
         <a href="/admin/settings"
                 @class([
-        'mb-1 flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium text-gray-600',
+        'mb-1 flex h-9 items-center gap-3 rounded-lg px-3 text-sm font-medium text-gray-600',
         'border-l-4  border-blue-600 bg-blue-50 px-3 text-sm font-medium text-blue-600' => request()->is('admin/settings'),
         ])>
             <i class="fa-solid fa-gear w-5 text-center text-slate-400"></i>
@@ -119,11 +129,20 @@
     <div class="border-t border-slate-200 p-4">
 
         <div class="mb-4 flex items-center gap-3">
+            @if (auth()->user()->image)
+            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-[#4f7cff] to-[#8b5cf6] p-0.5 shrink-0">
 
+                        <img src="{{ asset('storage/' . auth()->user()->image) }}"
+                            alt="Avatar"
+                            class="w-full h-full rounded-full object-cover border-2 border-white">    
+            </div> 
+            @else
             <div
                 class="flex h-11 w-11 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-600">
                 A
             </div>
+            @endif
+
 
             <div>
                 <h4 class="text-sm font-semibold text-slate-800">

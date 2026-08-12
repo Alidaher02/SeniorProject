@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\SessionsController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\SettingsController;
+use App\Http\Controllers\AI\adminAiController;
 use App\Http\Controllers\AI\AIController;
 use App\Http\Controllers\ShipmentController;
 use App\Http\Controllers\SensorController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\ShipmentReportController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Gps\gpsController;
+use App\Http\Controllers\Shipments\SettingsController as ShipmentsSettingsController;
 
 Route::redirect('/' , '/shipments');
 
@@ -30,7 +32,7 @@ Route::post('/shipments/request' , [ShipmentController::class , 'store'])->middl
 Route::patch('/shipments/{shipment}' , [ShipmentController::class , 'update'])->middleware('auth');
 Route::delete('/shipments/{shipment}' , [ShipmentController::class , 'destroy'])->middleware('auth');
 Route::get('/shipments/{shipment}/sensor-reading' , [ShipmentController::class , 'sensorReading']);
-
+Route::get('/shipments/settings' , [ShipmentsSettingsController::class , 'index']);
 
 });
 
@@ -84,6 +86,12 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/settings' ,[SettingsController::class , 'index']);
     Route::patch('/profile' , [SettingsController::class , 'update']);
 
+    Route::get('/admin/ai-assistant' , [adminAiController::class , 'index']);
+
+    Route::get('/admin/ai-assistant/insights' , [adminAiController::class , 'analayze']);
+
+
+
 });
 // Route::get('/showAdminShipments/{shipment}' , [AdminController::class , 'showAdminShipments'])->middleware('auth');
 Route::get('/shipments/{shipment}' , [ShipmentController::class , 'show'])->middleware('auth');
@@ -110,3 +118,7 @@ Route::post('/gps/readings' , [gpsController::class , 'store']);
 Route::get('/gps/readings/{shipment}' , [gpsController::class , 'latest']);
 
 Route::get('/gps/address/{shipment}', [gpsController::class, 'address']);
+
+Route::post('/profile/photo' , [SettingsController::class , 'uploadPhoto'])->middleware('auth');
+
+
