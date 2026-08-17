@@ -115,7 +115,7 @@ class ShipmentController extends Controller
     public function show(Shipment $shipment)
     {
         //Authorize
-        Gate::authorize('updateOrDelete' , $shipment);
+        Gate::authorize('show' , $shipment);
         
         $sensorReading = $shipment->sensorReadings()->latest()->first();
         return view('shipments.show', [

@@ -32,7 +32,7 @@
 
             <!-- Profile -->
             <section id="profile"
-                     class="scroll-mt-6 bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+                     class="scroll-mt-6 bg-white border border-slate-200 rounded-2xl p-7 shadow-sm w-full">
 
                 <div class="flex items-center gap-3.5 mb-6">
 
@@ -64,101 +64,10 @@
 
                 </div>
 
-                <div class="flex items-center gap-4 mb-6">
-
-                    <div class="w-28 h-28 rounded-full bg-gradient-to-br from-[#4f7cff] to-[#8b5cf6] p-0.5 shrink-0">
-                        @if (auth()->user()->image)
-                        <img src="{{ asset('storage/' . auth()->user()->image) }}"
-                             alt="Avatar"
-                             class="w-full cursor-pointer h-full rounded-full object-cover border-2 border-white">                            
-                        @else
-                        <img src="https://ui-avatars.com/api/?name=Ali+Daher&background=f1f5f9&color=334155"
-                             alt="Avatar"
-                             class="w-full h-full rounded-full object-cover border-2 border-white">
-                        @endif
-                    </div>
+                <div class="flex items-center gap-4 mb-6 w-full">
 
                     <div>
-<form action="/profile/photo"
-      method="POST"
-      enctype="multipart/form-data"
-      class="flex items-center gap-4">
 
-    @csrf
-
-    <!-- Choose photo -->
-    <label
-        for="profilePhoto"
-        class="group flex items-center gap-3 px-4 py-2.5
-               rounded-xl border border-slate-200
-               bg-white text-sm font-semibold text-slate-700
-               cursor-pointer
-               shadow-sm
-               hover:border-blue-300 hover:bg-blue-50/50
-               transition-all duration-200"
-    >
-        <span
-            class="flex  items-center justify-center
-                   rounded-lg bg-blue-50 text-blue-600
-                   group-hover:bg-blue-100 transition"
-        >
-            <svg xmlns="http://www.w3.org/2000/svg"
-                class="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 4v16m8-8H4" />
-            </svg>
-        </span>
-
-        <span>
-            <span class="block">Choose photo</span>
-            <span class="block text-[11px] font-normal text-slate-400">
-                JPG, PNG up to 2MB
-            </span>
-        </span>
-    </label>
-
-    <input
-        type="file"
-        id="profilePhoto"
-        name="image"
-        accept="image/*"
-        class="hidden"
-    >
-
-    <!-- Save -->
-<button
-    type="submit"
-    aria-label="Save photo"
-    class="flex h-12 w-12 items-center justify-center
-           rounded-full
-           bg-blue-600 text-white
-           shadow-lg shadow-blue-200/50
-           cursor-pointer
-           hover:bg-blue-700
-           hover:scale-105
-           active:scale-95
-           transition-all duration-200"
->
-    <svg xmlns="http://www.w3.org/2000/svg"
-        class="h-6 w-6"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor">
-        <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M5 13l4 4L19 7"
-        />
-    </svg>
-</button>
-
-</form>
 
 
 
@@ -179,55 +88,181 @@
 
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4.5">
+                <div class="grid grid-cols-1 sm:grid-cols-1 gap-4.5">
 
                     <div>
-                    <form id="updateProfile">
+                <form id="updateProfile" class="space-y-6 w-full">
 
-                        <label class="block text-xs font-medium text-slate-500 mb-1.5">
-                            Full name
-                        </label>
+    <!-- Profile Photo -->
+    <div class="flex items-center gap-5 rounded-2xl border border-slate-200 bg-slate-50/70 p-5">
 
-                        <input type="text"
-                                id="userName"
-                               value="{{auth()->user()->name}}"
-                               class="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-lg
-                                      px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500
-                                      focus:ring-2 focus:ring-blue-500/20 transition">
-                        <span id="nameError" class="text-red-500 text-xs"></span>
+        <!-- Preview -->
+        <div class="relative shrink-0">
+            <img
+                id="profileImagePreview"
+                src="{{ auth()->user()->image
+                    ? asset('storage/' . auth()->user()->image)
+                    : 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) . '&background=e2e8f0&color=475569' }}"
+                alt="Profile photo"
+                class="h-20 w-20 rounded-2xl object-cover ring-4 ring-white shadow-sm"
+            >
+        </div>
+
+        <!-- Upload -->
+        <div class="flex-1">
+            <p class="text-sm font-semibold text-slate-800">
+                Profile photo
+            </p>
+
+            <p class="mt-1 text-xs text-slate-400">
+                Upload a clear photo of yourself.
+            </p>
+
+            <label
+                for="profileImage"
+                class="mt-3 inline-flex items-center gap-2 rounded-lg
+                       border border-slate-200 bg-white px-3.5 py-2
+                       text-xs font-semibold text-slate-700
+                       shadow-sm cursor-pointer
+                       transition hover:border-blue-300 hover:bg-blue-50
+                       hover:text-blue-600"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg"
+                    class="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M16 8l-4-4m0 0L8 8m4-4v12"
+                    />
+                </svg>
+
+                Choose photo
+            </label>
+
+            <input
+                type="file"
+                id="profileImage"
+                name="image"
+                accept="image/*"
+                class="hidden"
+            >
+
+            <p class="mt-2 text-[11px] text-slate-400">
+                JPG or PNG · Maximum 2MB
+            </p>
+        </div>
+    </div>
+
+
+    <!-- Personal Information -->
+    <div>
+        <div class="mb-4">
+            <h3 class="text-sm font-semibold text-slate-900">
+                Personal information
+            </h3>
+
+            <p class="mt-1 text-xs text-slate-400">
+                Update your name and email address.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+
+            <!-- Name -->
+            <div>
+                <label
+                    for="userName"
+                    class="mb-1.5 block text-xs font-semibold text-slate-600"
+                >
+                    Full name
+                </label>
+
+                <input
+                    type="text"
+                    id="userName"
+                    value="{{ auth()->user()->name }}"
+                    class="w-full rounded-xl border border-slate-200
+                           bg-white px-3.5 py-2.5 text-sm text-slate-900
+                           shadow-sm outline-none
+                           transition
+                           placeholder:text-slate-400
+                           focus:border-blue-500
+                           focus:ring-4 focus:ring-blue-500/10"
+                >
+
+                <span
+                    id="nameError"
+                    class="mt-1.5 block text-xs text-red-500"
+                ></span>
+            </div>
+
+
+            <!-- Email -->
+            <div>
+                <label
+                    for="userEmail"
+                    class="mb-1.5 block text-xs font-semibold text-slate-600"
+                >
+                    Email address
+                </label>
+
+                <input
+                    type="email"
+                    id="userEmail"
+                    value="{{ auth()->user()->email }}"
+                    class="w-full rounded-xl border border-slate-200
+                           bg-white px-3.5 py-2.5 text-sm text-slate-900
+                           shadow-sm outline-none
+                           transition
+                           placeholder:text-slate-400
+                           focus:border-blue-500
+                           focus:ring-4 focus:ring-blue-500/10"
+                >
+
+                <span
+                    id="emailError"
+                    class="mt-1.5 block text-xs text-red-500"
+                ></span>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- Actions -->
+    <div class="flex items-center justify-end gap-3 border-t border-slate-200 pt-5">
+
+        <button
+            type="button"
+            class="rounded-xl border border-slate-200 bg-white
+                   px-4 py-2.5 text-sm font-medium text-slate-600
+                   shadow-sm transition
+                   hover:bg-slate-50 hover:text-slate-900"
+        >
+            Cancel
+        </button>
+
+        <button
+            type="submit"
+            class="rounded-xl bg-blue-600 px-5 py-2.5
+                   text-sm font-semibold text-white
+                   shadow-sm shadow-blue-600/20
+                   transition
+                   hover:bg-blue-700
+                   hover:-translate-y-0.5
+                   active:translate-y-0"
+        >
+            Save changes
+        </button>
+
+    </div>
+
+</form>
                     </div>
-
-                    <div>
-                        <label class="block text-xs font-medium text-slate-500 mb-1.5">
-                            Email address
-                        </label>
-
-                        <input type="email"
-                                id="userEmail"
-                               value="{{auth()->user()->email}}"
-                               class="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-lg
-                                      px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500
-                                      focus:ring-2 focus:ring-blue-500/20 transition">
-                        <span id="emailError" class="text-red-500 text-xs"></span>                                      
-                    </div>
-
-                </div>
-
-                <div class="flex justify-end gap-2.5 mt-6 pt-5 border-t border-slate-200">
-
-                    <button type="button" class="px-4.5 py-2.5 rounded-lg text-sm font-medium text-slate-500
-                                   border cursor-pointer border-slate-200 hover:bg-slate-50 hover:text-slate-900 transition">
-                        Cancel
-                    </button>
-
-                    <button type="submit" class="px-4.5 py-2.5 rounded-lg text-sm font-medium text-white
-                                   bg-blue-600 cursor-pointer hover:bg-blue-700
-                                   shadow-[0_4px_16px_-4px_rgba(79,124,255,0.4)]
-                                   hover:-translate-y-0.5 transition">
-                        Save profile
-                    </button>
-                    </form>
-                </div>
                 
 
             </section>

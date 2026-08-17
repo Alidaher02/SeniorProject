@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use App\Mail\WelcomeMail;
+use Illuminate\Support\Facades\Mail;
 
 class GoogleController extends Controller
 {
@@ -26,6 +28,9 @@ class GoogleController extends Controller
                     'email' => $googleUser->email,
                     'password' => bcrypt(str()->random(16)),
                 ]);
+
+            Mail::to($user->email)->send(new WelcomeMail($user));
+                
 
             }
 

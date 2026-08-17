@@ -42,13 +42,14 @@ function showModel(btn, cancel, card) {
 
 }
 
-window.openDeleteModal = function()
-{
-    document.getElementById("deleteModal").classList.remove("hidden");
+window.openDeleteModal = function(id) {
+    document
+        .getElementById(`deleteModal-${id}`)
+        .classList.remove("hidden");
 }
 
-window.closeDeleteModal = function()
-{
-    document.getElementById("deleteModal").classList.add("hidden");
-
+window.closeDeleteModal = function(id){
+    document
+        .getElementById(`deleteModal-${id}`)
+        .classList.add("hidden");
 }

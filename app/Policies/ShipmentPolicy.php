@@ -11,12 +11,20 @@ class ShipmentPolicy
     /**
      * Determine whether the user can view any models.
      */
-    public function updateOrDelete(User $user , Shipment $shipment): bool
+    public function updateOrDelete(User $user , Shipment $shipment): Response
     {
         // return $shipment->customer->is($user);
-        return $shipment->customer_id === $user->id || $user->isAdmin();
+        return $shipment->customer_id === $user->id
+         ? Response::allow() 
+         : Response::denyAsNotFound();
     }
 
+    public function show(User $user, Shipment $shipment): Response
+    {
+        return $shipment->customer_id === $user->id || $user->isAdmin()
+         ? Response::allow() 
+         : Response::denyAsNotFound();
+    }
 
     
 }

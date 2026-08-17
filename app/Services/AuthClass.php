@@ -3,10 +3,12 @@
 
 namespace App\Services;
 
+use App\Mail\WelcomeMail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules\Password;
 
 class AuthClass{
@@ -54,9 +56,10 @@ public function login(Request $request)
     ]);
 
 
+
     Auth::login($user);
 
-
+    Mail::to($user->email)->send(new WelcomeMail($user));
 
    return redirect('/shipments');
 }

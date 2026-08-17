@@ -1,357 +1,350 @@
 import axios from "axios";
 
-window.analayze = async function()
+const analyzeBtn = document.querySelectorAll(".analyze-btn");
+
+analyzeBtn.forEach(button => {
+    button.addEventListener("click", async () => {
+
+        const shipmentId = button.dataset.id;
+                // Show loading card
+        showAnalysisLoading();
+
+        // Start fake progress
+        const progressInterval = startFakeProgress();
+
+        analysisModal(button);
+        console.log("Shipment ID:", shipmentId);
+
+        
+
+
+
+        try {
+            const response = await axios.get(
+                `/admin/ai-assistant/${shipmentId}/analyze`
+            );
+
+            clearInterval(progressInterval);
+
+            const progressBar =
+                document.getElementById("analysisProgressBar");
+
+            const progressText =
+                document.getElementById("analysisProgressText");
+
+            const status =
+                document.getElementById("analysisStatus");
+
+            // Finish progress
+            progressBar.style.width = "100%";
+            progressText.textContent = "100%";
+            status.textContent = "Analysis complete.";
+
+            const shipment = response.data.shipment;
+            const readings = shipment.sensor_readings;
+            const latestReading = readings[readings.length - 1];
+            const ai = response.data.ai_response;
+
+            displayRisk(ai.shipment_risk);
+            displaySummary(ai.summary);
+            displayReadings(latestReading)
+            displayRange(shipment)
+            displayLocation(shipment);
+            displayIssues(ai.critical);
+            displayWarning(ai.warnings);
+            displayRecommendations(ai.recommendations);
+            
+            setTimeout(() => {
+
+                hideAnalysisLoading();
+
+                const analysisModal =
+                    document.getElementById("analysisModal");
+
+                analysisModal.classList.remove("hidden");
+                analysisModal.classList.add("flex");
+
+            }, 500);
+
+        } catch (error) {
+
+            clearInterval(progressInterval);
+
+            hideAnalysisLoading();
+
+            console.error("Analysis error:", error);
+        }
+    });
+});
+
+
+function analysisModal()
 {
+    const analysisModal = document.getElementById("analysisModal");
+    if(! analysisModal) return;
+
+        analysisModal.classList.remove("hidden");
+        analysisModal.classList.add("flex");
     
-    showLoading();
+    const closeBtn = document.getElementById("closeAnalysis");
+    const closeAnalysisBottom = document.getElementById("closeAnalysisBottom");
 
-    try{
-    const response = await axios.get('/admin/ai-assistant/insights');
+    const buttons = [
+        closeBtn,
+        closeAnalysisBottom
+    ]
 
-    const ai = response.data.ai_response;
+    buttons.forEach(btn => {
 
-    displaySummary(ai.summary);
+    btn.addEventListener('click' , ()=>{
 
-    displayCounts(ai);
+        analysisModal.classList.add("hidden");
 
-    displayCritical(ai.critical);  
-
-    displayRecommendations(ai.recommendations);
-
-    displayRisk(ai.shipment_risks);
-
-    displayWarnings(ai.warnings);
-
-    const analyzedAt = new Date(response.data.analyzed_at);
-    document.getElementById("lastAnalyzed").textContent =
-    analyzedAt.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit"
+    });       
     });
 
-    }catch(error)
-    {
-        console.error('AI Analysis failed:', error);
-        
-    }
-
-    
 
 }
-
-analayze();
-
 
 function displaySummary(summary)
 {
-    const container = document.getElementById("summaryContainer");
-    if(!container) return;
-    container.textContent = summary ;
+ const container = document.getElementById("summary");
 
-}
-function showLoading() {
+ if(! container) return;
 
-    const skeleton = 
-    `
-        <div class="animate-pulse space-y-2 p-5">
-            <div class="h-3 bg-slate-200 rounded w-full"></div>
-            <div class="h-3 bg-slate-200 rounded w-5/6"></div>
-            <div class="h-3 bg-slate-200 rounded w-3/4"></div>
-        </div>    
-    `;
-    const containers = [
-        "summaryContainer",
-        "criticalContainer",
-        "warningsContainer",
-        "recommendationsContainer",
-        "riskCotnainer"
-    ];
-
-    containers.forEach(id => {
-
-        const element = document.getElementById(id);
-
-        if(element)
-        {
-            element.innerHTML = skeleton;
-        }
-
-    });
-
-    const countSkeleton =
-    `
-        <div class="relative h-8 w-14 overflow-hidden rounded-lg bg-slate-200">
-            <div class="absolute inset-0 -translate-x-full animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/70 to-transparent"></div>
-        </div>    
-    `;
-
-    const countConainers = [
-        "activeShipments",
-        "warningsCount",
-        "criticalAlerts",
-        "activeAlerts",
-        "lastAnalyzed"
-
-    ];
-
-    countConainers.forEach(id => {
-
-        const element = document.getElementById(id);
-
-        if(id)
-        {
-            element.innerHTML = countSkeleton;
-        }
-    });
-
-
-
+ container.textContent = summary; 
 }
 
-
-
-
-function displayCritical(criticalShipments)
+function displayReadings(reading)
 {
-    const container = document.getElementById("criticalContainer");
-        if(!container) return;
+    const temp = document.getElementById("temp");
+    const humidity = document.getElementById("humidity");
+    if(temp)
+    {
+        temp.textContent = reading.temperature
+    }
+
+    if(humidity)
+    {
+        humidity.textContent = reading.humidity
+    }
+}
+
+function displayRange(shipment)
+{
+    const tempRange = document.getElementById("tempRange");
+    const humidityRange = document.getElementById("humidityRange");
+    const modalTracking = document.getElementById("modalTracking");
+
+    if(modalTracking)
+    {
+        modalTracking.textContent = shipment.tracking_number;
+    }
+
+    if(tempRange)
+    {
+        tempRange.textContent = `Allowed: ${shipment.temperature_limits.min}°C – ${shipment.temperature_limits.max}°C`;
+    }
+
+    if(humidityRange)
+    {
+        humidityRange.textContent = `Allowed: ${shipment.humidity_limits.min}% – ${shipment.humidity_limits.max}%`;
+    }
+}
+
+function displayLocation(shipment)
+{
+    const gpsReadings = document.getElementById("gpsReadings");
+
+    if(gpsReadings)
+    {
+        gpsReadings.textContent = shipment.gps_readings.latitude, shipment.gps_readings.longitude;
+    }
+}
+function displayIssues(issues)
+{
+    const container = document.getElementById("issuesContainer");
+    const issuesCount = document.getElementById("issuesCount");
+
+    if (!container) return;
 
     container.innerHTML = "";
 
-        if (criticalShipments.length === 0) {
-            container.innerHTML = `
-                <p class="text-sm text-slate-500">
-                    No Critical available.
+    if (issuesCount) {
+        issuesCount.textContent = issues.length;
+    }
+
+    issues.forEach(issue => {
+        container.innerHTML += `
+            <div class="rounded-lg border border-red-200 bg-red-50 p-3">
+
+                <p class="text-xs font-semibold text-red-800">
+                    ${issue.severity}
                 </p>
-            `;
-            return;
-        }    
-    criticalShipments.forEach(shipment => {   
-    container.innerHTML +=`
-                    <div class="border border-red-100 rounded-xl p-3 bg-red-50/40">
 
-                        <div class="flex items-start justify-between gap-2">
+                <p class="mt-1 text-[10px] leading-4 text-red-700">
+                    ${issue.issue}
+                </p>
 
-                            <div>
-                                <p class="text-sm font-semibold text-slate-900">
-                                    ${shipment.tracking_number}
-                                </p>
-
-
-                            </div>
-
-                            <span class="text-[10px] font-semibold uppercase text-red-600 bg-red-100 px-2 py-1 rounded-full">
-                                Critical
-                            </span>
-
-                        </div>
-
-                        <p class="text-sm text-slate-600 mt-2">
-                            ${shipment.issue}
-                        </p>
-
-                        <button
-                            type="button"
-                            class="text-xs font-medium text-red-600 hover:text-red-700 mt-3">
-                            View shipment →
-                        </button>
-
-                    </div>    
-    `; 
+            </div>
+        `;
     });
+}   
 
+function displayWarning(warnings) {
+    const container = document.getElementById("warningContainer");
+
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    warnings.forEach(warning => {
+        container.innerHTML += `
+            <div class="rounded-lg border border-orange-200 bg-orange-50 p-3">
+                <p class="text-xs font-semibold text-orange-800">
+                    ${warning.severity}
+                </p>
+
+                <p class="mt-1 text-[10px] text-orange-700">
+                    ${warning.issue}
+                </p>
+            </div>
+        `;
+    });
 }
 
-function displayWarnings(warnings)
-{
-    const container = document.getElementById("warningsContainer");
-        if(!container) return;
-
-container.innerHTML = "";
-        if (warnings.length === 0) {
-            container.innerHTML = `
-                <p class="text-sm text-slate-500">
-                    No warnings available.
-                </p>
-            `;
-            return;
-        }
-    warnings.forEach(shipment => {   
-    container.innerHTML +=`
-                    <div class="flex items-start gap-3">
-
-                        <div class="h-7 w-7 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
-                            <span class="text-xs font-bold text-blue-600">
-                                ${shipment.shipment_id}
-                            </span>
-                        </div>
-
-                        <div>
-                            <p class="text-sm font-medium text-slate-900">
-                             ${shipment.tracking_number}
-                            </p>
-
-                            <p class="text-sm text-slate-500 mt-0.5">
-                               ${shipment.issue}
-                            </p>
-                        </div>
-
-                    </div>
-    `; 
-    });
-
-}
-
-function displayRecommendations(recommendations)
-{
+function displayRecommendations(recommendations) {
     const container = document.getElementById("recommendationsContainer");
-        if(!container) return;
 
-        container.innerHTML = "";
-        if (recommendations.length === 0) {
-            container.innerHTML = `
-                <p class="text-sm text-slate-500">
-                    No recommendations available.
-                </p>
-            `;
-            return;
-        }
-    recommendations.forEach(shipment => {   
-    container.innerHTML +=`
-                    <div class="flex items-start gap-3">
-
-                        <div class="h-7 w-7 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
-                            <span class="text-xs font-bold text-blue-600">
-                                ${shipment.shipment_id}
-                            </span>
-                        </div>
-
-                        <div>
-                            <p class="text-sm font-medium text-slate-900">
-                             ${shipment.tracking_number}
-                            </p>
-
-                            <p class="text-sm text-slate-500 mt-0.5">
-                               ${shipment.text}
-                            </p>
-                        </div>
-
-                    </div>
-    `; 
-    });
-
-}
-function displayRisk(shipments)
-{
-    const container = document.getElementById("riskCotnainer");
-        if(!container) return;
-
+    if (!container) return;
 
     container.innerHTML = "";
-    shipments.forEach(shipment =>{
 
-    container.innerHTML += 
-    `
- <div class="px-5 py-4 flex flex-col md:flex-row md:items-center gap-4">
-
-                    <div class="flex-1">
-
-                        <div class="flex items-center gap-2">
-
-                            <span class="text-sm font-semibold text-slate-900">
-                                ${shipment.tracking_number}
-                            </span>
-
-                            <span class="text-[10px] font-semibold uppercase
-                             ${
-                                shipment.risk_level === 'low'
-                                    ? 'text-green-600 bg-green-50 border border-green-100 '
-                                    : shipment.risk_level === 'medium'
-                                    ? 'text-yellow-600 bg-yellow-50 border border-yellow-100'
-                                    : shipment.risk_level === 'high'
-                                    ? 'text-red-600 bg-red-50 border border-red-100'
-                                    : 'text-red-600 bg-red-50 border border-red-100'
-                                }
-                             
-                             px-2 py-0.5 rounded-full"
-                             
-                             >
-                                ${shipment.risk_level}
-                            </span>
-
-                        </div>
-                    </div>
-
-                    <div class="w-full md:w-48">
-
-                        <div class="flex justify-between text-xs mb-1">
-
-                            <span class="text-slate-500">
-                                Risk score
-                            </span>
-
-                            <span class="font-semibold
-                             ${
-                                shipment.risk_level === 'low'
-                                    ? 'text-green-500'
-                                    : shipment.risk_level === 'medium'
-                                    ? 'text-yellow-600'
-                                    : shipment.risk_level === 'high'
-                                    ? 'text-red-600'
-                                    : 'text-red-600'
-                                }                                
-                            ">
-                                ${shipment.risk_percentage}
-                            </span>
-
-                        </div>
-
-                        <div class="h-2 bg-slate-100 rounded-full overflow-hidden">
-
-                            <div class="h-full rounded-full
-                             ${
-                                shipment.risk_level === 'low'
-                                    ? 'bg-green-500'
-                                    : shipment.risk_level === 'medium'
-                                    ? 'bg-yellow-600'
-                                    : shipment.risk_level === 'high'
-                                    ? 'bg-red-600'
-                                    : 'bg-red-600'
-                                }                           
-                            "
-                                style="width: ${shipment.risk_percentage}%">
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>      
-    `;
+    recommendations.forEach(recommendation => {
+        container.innerHTML += `
+            <div class="rounded-md bg-blue-50 px-3 py-2.5">
+                <p class="text-[11px] text-blue-800">
+                    ${recommendation.text}
+                </p>
+            </div>
+        `;
     });
-
 }
 
-function displayCounts(ai) {
-    const activeShipments = document.getElementById("activeShipments");
-    const activeAlerts = document.getElementById("activeAlerts");
-    const criticalAlerts = document.getElementById("criticalAlerts");
-    const warningsCount = document.getElementById("warningsCount");
+function displayRisk(risk)
+{
+    const riskPercent = document.getElementById("riskPercent");
+    const riskLevel = document.getElementById("riskLevel");
+    const riskCircle = document.getElementById("riskCircle");
 
-    if (activeShipments) {
-        activeShipments.textContent = ai.active_shipments ?? 0;
+    console.log("RISK:", risk);
+
+    if (!risk) return;
+
+    const percentage = Number(risk.risk_percentage);
+    const level = risk.risk_level;
+
+    if (riskPercent) {
+        riskPercent.textContent = `${percentage}%`;
     }
 
-    if (activeAlerts) {
-        activeAlerts.textContent = ai.active_alerts ?? 0;
+    if (riskLevel) {
+        riskLevel.textContent = level;
     }
 
-    if (criticalAlerts) {
-        criticalAlerts.textContent = ai.critical_count ?? 0;
-    }
+    if (riskCircle) {
+        const circumference = 251;
+        const offset = circumference - (percentage / 100) * circumference;
 
-    if (warningsCount) {
-        warningsCount.textContent = ai.warning_count ?? 0;
+        riskCircle.style.strokeDashoffset = offset;
+
+        if (level === "low") {
+            riskCircle.style.stroke = "#22c55e";
+            riskPercent.className = "text-lg font-bold text-green-700";
+            riskLevel.className = "text-xs font-semibold uppercase text-green-700";
+        }
+
+        else if (level === "medium") {
+            riskCircle.style.stroke = "#eab308";
+            riskPercent.className = "text-lg font-bold text-yellow-700";
+            riskLevel.className = "text-xs font-semibold uppercase text-yellow-700";
+        }
+
+        else if (level === "high") {
+            riskCircle.style.stroke = "#f97316";
+            riskPercent.className = "text-lg font-bold text-orange-700";
+            riskLevel.className = "text-xs font-semibold uppercase text-orange-700";
+        }
+
+        else if (level === "critical") {
+            riskCircle.style.stroke = "#ef4444";
+            riskPercent.className = "text-lg font-bold text-red-700";
+            riskLevel.className = "text-xs font-semibold uppercase text-red-700";
+        }
     }
+}
+
+function showAnalysisLoading()
+{
+    const loading = document.getElementById("analysisLoading");
+    const progressBar = document.getElementById("analysisProgressBar");
+    const progressText = document.getElementById("analysisProgressText");
+    const status = document.getElementById("analysisStatus");
+
+    loading.classList.remove("hidden");
+    loading.classList.add("flex");
+
+    progressBar.style.width = "0%";
+    progressText.textContent = "0%";
+    status.textContent = "Collecting shipment data...";
+}
+
+function hideAnalysisLoading()
+{
+    const loading = document.getElementById("analysisLoading");
+
+    loading.classList.add("hidden");
+    loading.classList.remove("flex");
+}
+
+function startFakeProgress()
+{
+    const progressBar = document.getElementById("analysisProgressBar");
+    const progressText = document.getElementById("analysisProgressText");
+    const status = document.getElementById("analysisStatus");
+
+    let progress = 0;
+
+    const interval = setInterval(() => {
+
+        if (progress >= 95) {
+            clearInterval(interval);
+            return;
+        }
+
+        progress += Math.floor(Math.random() * 5) + 1;
+
+        if (progress > 95) {
+            progress = 95;
+        }
+
+        progressBar.style.width = `${progress}%`;
+        progressText.textContent = `${progress}%`;
+
+        if (progress < 30) {
+            status.textContent = "Collecting shipment data...";
+        } 
+        else if (progress < 60) {
+            status.textContent = "Analyzing sensor readings...";
+        } 
+        else if (progress < 80) {
+            status.textContent = "Checking alerts and violations...";
+        } 
+        else {
+            status.textContent = "Generating AI risk assessment...";
+        }
+
+    }, 300);
+
+    return interval;
 }

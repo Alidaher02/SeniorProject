@@ -131,12 +131,12 @@
 
 
 
-                                <button onclick="openDeleteModal()" class="rounded-lg cursor-pointer border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-100">
+                                <button    onclick="openDeleteModal({{ $customer->id }})" class="rounded-lg cursor-pointer border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-100">
                                     Delete
                                 </button>
 
 
-                    <div id="deleteModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+                    <div id="deleteModal-{{ $customer->id }}" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
                     <div class="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl text-center">
                         
                         <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100 text-red-600">
@@ -149,7 +149,7 @@
                         <p class="mt-1 text-xs text-slate-500">This action cannot be undone. Do you really want to cancel this shipment?</p>
 
                         <div class="mt-6 flex justify-center gap-3">
-                            <button type="button" onclick="closeDeleteModal()" class="rounded-lg border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50">
+                            <button type="button" onclick="closeDeleteModal({{ $customer->id }})" class="rounded-lg border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50">
                                 Nevermind
                             </button>
 
@@ -255,7 +255,7 @@
                             @csrf
                             @method('DELETE')
 
-                            <button class="w-full rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-600 hover:bg-red-100">
+                            <button type="submit" class="w-full rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-600 hover:bg-red-100">
                                 Delete
                             </button>
 
@@ -285,6 +285,96 @@
     </div>
 
 </div>
+
+<div class="hidden items-center gap-1 sm:flex">
+
+    {{-- Previous --}}
+    @if ($customers->onFirstPage())
+        <span class="flex h-9 min-w-9 items-center justify-center rounded-lg
+                     text-slate-300 cursor-not-allowed">
+            ‹
+        </span>
+    @else
+        <a href="{{ $customers->previousPageUrl() }}"
+           class="flex h-9 min-w-9 items-center justify-center rounded-lg
+                  text-slate-600 transition hover:bg-blue-50 hover:text-blue-600">
+            ‹
+        </a>
+    @endif
+
+
+    {{-- First page --}}
+    @if ($customers->currentPage() > 3)
+        <a href="{{ $customers->url(1) }}"
+           class="flex h-9 min-w-9 items-center justify-center rounded-lg
+                  px-3 text-sm font-medium text-slate-600
+                  hover:bg-blue-50 hover:text-blue-600">
+            1
+        </a>
+
+        <span class="px-1 text-slate-400">...</span>
+    @endif
+
+
+    {{-- Nearby pages --}}
+    @foreach ($customers->getUrlRange(
+        max(1, $customers->currentPage() - 2),
+        min($customers->lastPage(), $customers->currentPage() + 2)
+    ) as $page => $url)
+
+        @if ($page == $customers->currentPage())
+
+            <span class="flex h-9 min-w-9 items-center justify-center rounded-lg
+                         bg-blue-600 px-3 text-sm font-semibold text-white
+                         shadow-sm shadow-blue-600/20">
+                {{ $page }}
+            </span>
+
+        @else
+
+            <a href="{{ $url }}"
+               class="flex h-9 min-w-9 items-center justify-center rounded-lg
+                      px-3 text-sm font-medium text-slate-600
+                      transition hover:bg-blue-50 hover:text-blue-600">
+                {{ $page }}
+            </a>
+
+        @endif
+
+    @endforeach
+
+
+    {{-- Last page --}}
+    @if ($customers->currentPage() < $customers->lastPage() - 2)
+
+        <span class="px-1 text-slate-400">...</span>
+
+        <a href="{{ $customers->url($customers->lastPage()) }}"
+           class="flex h-9 min-w-9 items-center justify-center rounded-lg
+                  px-3 text-sm font-medium text-slate-600
+                  hover:bg-blue-50 hover:text-blue-600">
+            {{ $customers->lastPage() }}
+        </a>
+
+    @endif
+
+
+    {{-- Next --}}
+    @if ($customers->hasMorePages())
+        <a href="{{ $customers->nextPageUrl() }}"
+           class="flex h-9 min-w-9 items-center justify-center rounded-lg
+                  text-slate-600 transition hover:bg-blue-50 hover:text-blue-600">
+            ›
+        </a>
+    @else
+        <span class="flex h-9 min-w-9 items-center justify-center rounded-lg
+                     text-slate-300 cursor-not-allowed">
+            ›
+        </span>
+    @endif
+
+</div>
+
 
 
 <div class="hidden" id="customerCard"> 

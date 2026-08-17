@@ -7,115 +7,65 @@ use Gemini;
 
 class GeminiService
 {
-    public function analyzeShipments()
+    public function analyzeShipment(Shipment $shipment)
     {
-        $shipments = Shipment::with([
-            'sensorReadings',
-            'gpsReadings',
-            'alerts'
-        ])
-        ->where('status', 'in_transit')
-        ->get();
-
-        $shipmentData = $shipments->map(function ($shipment) {
-
-            $reading = $shipment->sensorReadings
-                ->sortByDesc('created_at')
-                ->first();
-
-            $gps = $shipment->gpsReadings
-                ->sortByDesc('created_at')
-                ->first();
-
-            $activeAlerts = $shipment->alerts
-                ->where('status', 'active')
-                ->values();
-
-            return [
-                'shipment_id' => $shipment->id,
-
-                'tracking_number' => $shipment->{'tracking-number'},
-
-                'product' => $shipment->product_name,
-
-                'status' => $shipment->status,
-
-                'origin' => $shipment->origin,
-
-                'destination' => $shipment->destination,
-
-                'temperature_limits' => [
-                    'min' => $shipment->min_temperature,
-                    'max' => $shipment->max_temperature,
-                ],
-
-                'humidity_limits' => [
-                    'min' => $shipment->min_humidity,
-                    'max' => $shipment->max_humidity,
-                ],
-
-                'latest_reading' => [
-                    'temperature' => $reading?->temperature,
-                    'humidity' => $reading?->humidity,
-                    'tilt' => $reading?->tilt,
-                    'light' => $reading?->light,
-                ],
-
-                'gps' => [
-                    'latitude' => $gps?->latitude,
-                    'longitude' => $gps?->longitude,
-                ],
-
-                'active_alerts' => $activeAlerts->map(function ($alert) {
-                    return [
-                        'type' => $alert->type,
-                        'severity' => $alert->severity,
-                        'message' => $alert->message,
-                    ];
-                })->values(),
-            ];
-        })->values();
+        $shipmentData = $this->getShipmentData($shipment);
 
         $prompt = <<<PROMPT
-You are ShipTrack AI, a logistics monitoring system for administrators.
+You are ShipTrack AI, an intelligent logistics monitoring system for administrators.
 
-Analyze ALL provided in-transit shipments.
+The administrator has selected ONE shipment and requested an AI analysis.
 
-Use ONLY the provided shipment data.
-
-Do not invent any information.
-
-TEMPERATURE RULES:
-
-temperature < minimum:
-Temperature is below the allowed minimum.
-
-temperature > maximum:
-Temperature is above the allowed maximum.
-
-minimum <= temperature <= maximum:
-Temperature is NORMAL.
+Analyze ONLY the shipment provided below.
 
 IMPORTANT:
-If temperature equals the minimum, it is NORMAL.
-If temperature equals the maximum, it is NORMAL.
+- Do not analyze other shipments.
+- Do not invent any information.
+- Use ONLY the provided shipment data.
+- The shipment data contains the complete available monitoring history.
+- Analyze ALL provided sensor readings, GPS readings, and alerts.
+- Compare every temperature and humidity reading against the shipment's configured limits.
+- Consider the chronological history of the readings, not only the latest reading.
 
-HUMIDITY RULES:
+TEMPERATURE ANALYSIS:
 
-humidity < minimum:
-Humidity is below the allowed minimum.
+For every sensor reading:
 
-humidity > maximum:
-Humidity is above the allowed maximum.
+If temperature < minimum allowed temperature:
+The temperature is BELOW the allowed range.
 
-minimum <= humidity <= maximum:
-Humidity is NORMAL.
+If temperature > maximum allowed temperature:
+The temperature is ABOVE the allowed range.
+
+If minimum <= temperature <= maximum:
+The temperature is NORMAL.
 
 IMPORTANT:
-If humidity equals the minimum, it is NORMAL.
-If humidity equals the maximum, it is NORMAL.
+- A temperature equal to the minimum is NORMAL.
+- A temperature equal to the maximum is NORMAL.
+- Never classify a value inside the allowed range as a problem.
 
-TILT:
+HUMIDITY ANALYSIS:
+
+For every sensor reading:
+
+If humidity < minimum allowed humidity:
+The humidity is BELOW the allowed range.
+
+If humidity > maximum allowed humidity:
+The humidity is ABOVE the allowed range.
+
+If minimum <= humidity <= maximum:
+The humidity is NORMAL.
+
+IMPORTANT:
+- Humidity equal to the minimum is NORMAL.
+- Humidity equal to the maximum is NORMAL.
+- Never classify a value inside the allowed range as a problem.
+
+TILT ANALYSIS:
+
+For every sensor reading:
 
 tilt = 0:
 No tilt detected.
@@ -125,29 +75,95 @@ Tilt detected.
 
 Only report tilt when tilt = 1.
 
-ACTIVE ALERTS:
+If multiple tilt events exist, mention that multiple tilt events occurred and consider them when calculating risk.
 
-Only use alerts contained in active_alerts.
+LIGHT ANALYSIS:
 
-Never invent alerts.
+Analyze the light readings when they contain meaningful information.
+
+Only report light as a problem when the provided data clearly indicates an abnormal condition.
+
+Do not invent a light threshold if one is not provided.
+
+GPS ANALYSIS:
+
+Use the provided GPS readings to understand the shipment's movement/location history.
+
+Do not invent addresses or locations.
+
+If GPS data is missing, mention missing GPS monitoring only if it is relevant to the shipment analysis.
+
+ALERT ANALYSIS:
+
+Use ONLY alerts contained in the provided shipment data.
+
+Do not invent alerts.
+
+Consider:
+- alert type
+- severity
+- message
+- status
+- timestamp
+
+Active alerts should have greater importance when calculating risk.
+
+Historical/resolved alerts may still be considered as part of the shipment history, but do not treat them as currently active.
+
+ISSUES:
+
+Each different confirmed problem must be a separate issue.
+
+For example:
+
+If:
+- temperature is above maximum
+- humidity is above maximum
+- tilt is detected
+
+Create THREE separate issues.
+
+Do NOT combine these into one issue.
+
+Only report confirmed problems supported by the provided data.
+
+SEVERITY:
+
+Use these rules:
+
+Critical:
+- serious temperature violation
+- serious humidity violation
+- critical alert
+- repeated serious violations
+- multiple serious problems
+- immediate attention required
+
+Warning:
+- less serious sensor violation
+- warning alert
+- tilt detected without other serious problems
+- missing important monitoring data
+
+Never classify a normal reading as a warning or critical problem.
 
 RISK:
 
-Calculate ONE overall risk percentage for EVERY shipment.
+Calculate ONE overall risk percentage for this shipment.
 
-The risk represents the entire shipment, not an individual alert.
+The risk represents the condition of the entire shipment based on its complete monitoring history.
 
 Consider:
-
-- temperature
-- humidity
-- tilt
-- light when relevant
+- temperature violations
+- humidity violations
+- number of violations
+- duration/repetition of violations
+- tilt events
+- light problems when relevant
 - active alerts
 - alert severity
-- number of problems
-- severity of problems
-- missing important data
+- GPS information when relevant
+- missing important monitoring data
 
 Risk levels:
 
@@ -156,71 +172,59 @@ Risk levels:
 50-74 = high
 75-100 = critical
 
-Do not give every shipment the same percentage.
-
-Do not automatically return 94%.
-
-A shipment with normal readings and no problems should have LOW risk.
-
-Multiple serious problems should result in a higher risk.
-
-ISSUES:
-
-Each different problem must be a separate object.
-
-For example, if temperature is high AND humidity is high AND tilt is detected, create THREE separate issues.
-
-Do not combine them into one issue.
-
-SEVERITY:
-
-Critical:
-- serious sensor violations
-- critical alerts
-- multiple serious problems
-- immediate attention required
-
-Warning:
-- less serious problems
-- warning alerts
-- tilt without other serious problems
-- missing important monitoring data
-
-Never classify a normal reading as critical or warning.
+IMPORTANT:
+- Do not automatically assign a high or critical risk.
+- Do not automatically return 94%.
+- A shipment with normal readings and no problems should have LOW risk.
+- A shipment with repeated or serious violations should have a higher risk.
+- The percentage must reflect the actual provided data.
 
 RECOMMENDATIONS:
 
 Recommendations must directly relate to confirmed problems.
 
 Temperature problem:
-Recommend checking temperature conditions.
+Recommend checking the shipment's temperature conditions.
 
 Humidity problem:
-Recommend checking humidity conditions.
+Recommend checking the shipment's humidity conditions.
 
-Tilt:
-Recommend inspecting the shipment for handling problems.
+Tilt detected:
+Recommend inspecting the shipment for possible handling problems.
 
 Critical alert:
 Recommend immediate investigation.
+
+Missing monitoring data:
+Recommend checking the relevant sensor/system.
+
+Do not provide recommendations for problems that do not exist.
 
 SUMMARY:
 
 Create a short administrator-friendly summary.
 
-Mention the most important confirmed problems and risks.
+The summary should mention:
+- overall shipment condition
+- most important confirmed problems
+- overall risk
+- whether immediate attention is required
 
-Never say a normal reading is abnormal.
+Do not claim that normal readings are abnormal.
 
-RETURN ONLY VALID JSON.
+RETURN FORMAT:
 
-Do not return Markdown.
+Return ONLY valid JSON.
 
-Use exactly this structure:
+Do NOT return Markdown.
+Do NOT use code fences.
+Do NOT add explanations outside the JSON.
+
+Use EXACTLY this structure:
 
 {
-    "summary": "Overall shipment situation.",
-
+    "summary": "Short administrator-friendly summary of this shipment.",
+    
     "critical": [
         {
             "shipment_id": 8,
@@ -234,19 +238,17 @@ Use exactly this structure:
         {
             "shipment_id": 8,
             "tracking_number": "SHIP-692573",
-            "issue": "A tilt event has been detected.",
+            "issue": "A tilt event was detected.",
             "severity": "warning"
         }
     ],
 
-    "shipment_risks": [
-        {
-            "shipment_id": 8,
-            "tracking_number": "SHIP-692573",
-            "risk_percentage": 72,
-            "risk_level": "high"
-        }
-    ],
+    "shipment_risk": {
+        "shipment_id": 8,
+        "tracking_number": "SHIP-692573",
+        "risk_percentage": 72,
+        "risk_level": "high"
+    },
 
     "recommendations": [
         {
@@ -259,9 +261,18 @@ Use exactly this structure:
 
 IMPORTANT:
 
-Every shipment must appear exactly once in shipment_risks.
-
-The shipment_id and tracking_number MUST come from the provided data.
+- There is ONLY ONE shipment in this analysis.
+- Return exactly ONE shipment_risk object.
+- shipment_id MUST come from the provided shipment data.
+- tracking_number MUST come from the provided shipment data.
+- Do not change or invent the shipment ID.
+- Do not change or invent the tracking number.
+- critical must contain only confirmed critical problems.
+- warnings must contain only confirmed warnings.
+- recommendations must relate directly to confirmed problems.
+- If there are no critical problems, return an empty critical array.
+- If there are no warnings, return an empty warnings array.
+- If there are no recommendations, return an empty recommendations array.
 
 SHIPMENT DATA:
 
@@ -269,11 +280,10 @@ PROMPT;
 
         $prompt .= json_encode(
             $shipmentData,
-            JSON_PRETTY_PRINT
+            JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
         );
 
         try {
-
             $client = Gemini::client(
                 env('GEMINI_API_KEY')
             );
@@ -284,7 +294,25 @@ PROMPT;
 
             $content = $response->text();
 
-            $analysis = json_decode($content, true);
+            // Remove accidental markdown code fences if Gemini adds them
+            $content = trim($content);
+
+            if (str_starts_with($content, '```json')) {
+                $content = substr($content, 7);
+                $content = str_ends_with($content, '```')
+                    ? substr($content, 0, -3)
+                    : $content;
+            } elseif (str_starts_with($content, '```')) {
+                $content = substr($content, 3);
+                $content = str_ends_with($content, '```')
+                    ? substr($content, 0, -3)
+                    : $content;
+            }
+
+            $analysis = json_decode(
+                trim($content),
+                true
+            );
 
             if (!is_array($analysis)) {
                 throw new \RuntimeException(
@@ -292,34 +320,119 @@ PROMPT;
                 );
             }
 
-                return [
-                    'summary' => $analysis['summary'] ?? 'No summary available.',
+            return [
+                'summary' => $analysis['summary']
+                    ?? 'No summary available.',
 
-                    'active_shipments' => $shipments->count(),
+                'shipment_risk' => $analysis['shipment_risk']
+                    ?? [
+                        'shipment_id' => $shipment->id,
+                        'tracking_number' => $shipment->{'tracking-number'},
+                        'risk_percentage' => 0,
+                        'risk_level' => 'low',
+                    ],
 
-                    'active_alerts' => $shipments
-                        ->flatMap->alerts
-                        ->where('status', 'active')
-                        ->count(),
+                'critical' => $analysis['critical'] ?? [],
 
-                    'critical' => $analysis['critical'] ?? [],
+                'critical_count' => count(
+                    $analysis['critical'] ?? []
+                ),
 
-                    'critical_count' => count($analysis['critical'] ?? []),
+                'warnings' => $analysis['warnings'] ?? [],
 
-                    'warnings' => $analysis['warnings'] ?? [],
+                'warning_count' => count(
+                    $analysis['warnings'] ?? []
+                ),
 
-                    'warning_count' => count($analysis['warnings'] ?? []),
-
-                    'shipment_risks' => $analysis['shipment_risks'] ?? [],
-
-                    'recommendations' => $analysis['recommendations'] ?? [],
-                ];
+                'recommendations' => $analysis['recommendations']
+                    ?? [],
+            ];
 
         } catch (\Exception $e) {
-
             throw new \RuntimeException(
                 'Gemini analysis failed: ' . $e->getMessage()
             );
         }
+    }
+
+    public function getShipmentMonitoringData(Shipment $shipment)
+    {
+        return $this->getShipmentData($shipment);
+    }
+
+    private function getShipmentData(Shipment $shipment)
+    {
+        $shipment->load([
+            'sensorReadings',
+            'gpsReadings',
+            'alerts',
+        ]);
+
+        return [
+            'shipment_id' => $shipment->id,
+
+            'tracking_number' => $shipment->{'tracking-number'},
+
+            'product' => $shipment->product_name,
+
+            'status' => $shipment->status,
+
+            'origin' => $shipment->origin,
+
+            'destination' => $shipment->destination,
+
+            'temperature_limits' => [
+                'min' => $shipment->min_temperature,
+                'max' => $shipment->max_temperature,
+            ],
+
+            'humidity_limits' => [
+                'min' => $shipment->min_humidity,
+                'max' => $shipment->max_humidity,
+            ],
+
+            'sensor_readings' => $shipment->sensorReadings
+                ->sortBy('created_at')
+                ->map(function ($reading) {
+                    return [
+                        'temperature' => $reading->temperature,
+                        'humidity' => $reading->humidity,
+                        'tilt' => $reading->tilt,
+                        'light' => $reading->light,
+                        'created_at' => $reading->created_at
+                            ?->toISOString(),
+                    ];
+                })
+                ->values()
+                ->toArray(),
+
+            'gps_readings' => $shipment->gpsReadings
+                ->sortBy('created_at')
+                ->map(function ($gps) {
+                    return [
+                        'latitude' => $gps->latitude,
+                        'longitude' => $gps->longitude,
+                        'created_at' => $gps->created_at
+                            ?->toISOString(),
+                    ];
+                })
+                ->values()
+                ->toArray(),
+
+            'alerts' => $shipment->alerts
+                ->sortBy('created_at')
+                ->map(function ($alert) {
+                    return [
+                        'type' => $alert->type,
+                        'severity' => $alert->severity,
+                        'message' => $alert->message,
+                        'status' => $alert->status,
+                        'created_at' => $alert->created_at
+                            ?->toISOString(),
+                    ];
+                })
+                ->values()
+                ->toArray(),
+        ];
     }
 }

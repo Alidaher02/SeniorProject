@@ -113,18 +113,30 @@
               <p class="text-xs text-gray-500">
                 Customer
             </p>
-            @else 
+            @elseif(Auth::user()->role === 'driver')
              <p class="text-xs text-gray-500">
                 Driver
             </p> 
+            @else
+             <p class="text-xs text-gray-500">
+                Admin
+            </p>            
             @endif
             
         </div>
 
-
+       @if(Auth::user()->image)
+        <img
+        src="{{ asset('storage/' . auth()->user()->image) }}"
+        alt="Profile"
+        class="h-9 w-9 rounded-full object-cover"
+        >
+       @else
         <div class="flex h-9 w-9 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-600">
             {{ strtoupper(substr(Auth::user()->name,0,1)) }}
         </div>
+       @endif
+
 
 
         <!-- Logout -->

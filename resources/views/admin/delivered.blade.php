@@ -171,6 +171,111 @@
 
             </div>
 
+
+            <!-- Pagination -->
+
+            <div class="mt-5 flex items-center justify-between">
+
+                {{-- Previous --}}
+
+                @if ($shipments->onFirstPage())
+
+                    <span class="flex h-9 items-center justify-center rounded-lg px-3 text-sm font-medium text-slate-300 cursor-not-allowed">
+                        Previous
+                    </span>
+
+                @else
+
+                    <a href="{{ $shipments->previousPageUrl() }}"
+                       class="flex h-9 items-center justify-center rounded-lg border border-slate-200 px-3 text-sm font-medium text-slate-600 transition hover:bg-green-50 hover:text-green-600">
+                        Previous
+                    </a>
+
+                @endif
+
+
+                {{-- Pages --}}
+
+                <div class="hidden items-center gap-1 sm:flex">
+
+                    {{-- First page --}}
+
+                    @if ($shipments->currentPage() > 3)
+
+                        <a href="{{ $shipments->url(1) }}"
+                           class="flex h-9 min-w-9 items-center justify-center rounded-lg px-3 text-sm font-medium text-slate-600 hover:bg-green-50 hover:text-green-600">
+                            1
+                        </a>
+
+                        <span class="px-1 text-slate-400">
+                            ...
+                        </span>
+
+                    @endif
+
+
+                    {{-- Nearby pages --}}
+
+                    @foreach ($shipments->getUrlRange(
+                        max(1, $shipments->currentPage() - 2),
+                        min($shipments->lastPage(), $shipments->currentPage() + 2)
+                    ) as $page => $url)
+
+                        @if ($page == $shipments->currentPage())
+
+                            <span class="flex h-9 min-w-9 items-center justify-center rounded-lg bg-green-600 px-3 text-sm font-semibold text-white shadow-sm shadow-green-600/20">
+                                {{ $page }}
+                            </span>
+
+                        @else
+
+                            <a href="{{ $url }}"
+                               class="flex h-9 min-w-9 items-center justify-center rounded-lg px-3 text-sm font-medium text-slate-600 transition hover:bg-green-50 hover:text-green-600">
+                                {{ $page }}
+                            </a>
+
+                        @endif
+
+                    @endforeach
+
+
+                    {{-- Last page --}}
+
+                    @if ($shipments->currentPage() < $shipments->lastPage() - 2)
+
+                        <span class="px-1 text-slate-400">
+                            ...
+                        </span>
+
+                        <a href="{{ $shipments->url($shipments->lastPage()) }}"
+                           class="flex h-9 min-w-9 items-center justify-center rounded-lg px-3 text-sm font-medium text-slate-600 hover:bg-green-50 hover:text-green-600">
+                            {{ $shipments->lastPage() }}
+                        </a>
+
+                    @endif
+
+                </div>
+
+
+                {{-- Next --}}
+
+                @if ($shipments->hasMorePages())
+
+                    <a href="{{ $shipments->nextPageUrl() }}"
+                       class="flex h-9 items-center justify-center rounded-lg border border-slate-200 px-3 text-sm font-medium text-slate-600 transition hover:bg-green-50 hover:text-green-600">
+                        Next
+                    </a>
+
+                @else
+
+                    <span class="flex h-9 items-center justify-center rounded-lg px-3 text-sm font-medium text-slate-300 cursor-not-allowed">
+                        Next
+                    </span>
+
+                @endif
+
+            </div>
+
         </div>
 
 
@@ -178,4 +283,4 @@
 
 </div>
 
-</x-admin-layout>
+</x-admin-layout>   

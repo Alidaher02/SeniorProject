@@ -47,11 +47,13 @@ class AdminController extends Controller
 
 
 
+
         return view('admin.adminShipments' , [
 
             'shipments' => Shipment::where('status' , '!=' , 'pending')->latest()->get(),
             'shipmentStatus' => $shipmentStatus,
-            'userStats' => $userStats
+            'userStats' => $userStats,
+            
         ]);
    }
 
@@ -60,7 +62,7 @@ class AdminController extends Controller
 
 
         return view('admin.customers' , [
-            'customers' => User::where('role' , 'customer')->get()
+            'customers' => User::where('role' , 'customer')->paginate(20)
         ]);
    }
 
@@ -76,21 +78,21 @@ class AdminController extends Controller
    public function requests(){
 
         return view('admin.requests' , [
-            'shipments' => Shipment::where('status' , 'pending')->latest()->get()
+            'shipments' => Shipment::where('status' , 'pending')->latest()->paginate(10)
         ]);
    }
 
    public function intransit(){
 
         return view('admin.intransit' , [
-            'shipments' => Shipment::where('status' , 'in_transit')->latest()->get()
+            'shipments' => Shipment::where('status' , 'in_transit')->latest()->paginate(10)
         ]);
    }
 
    public function delivered(){
 
         return view('admin.delivered' , [
-            'shipments' => Shipment::where('status' , 'delivered')->latest()->get()
+            'shipments' => Shipment::where('status' , 'delivered')->latest()->paginate(10)
         ]);
    }
 
@@ -98,8 +100,8 @@ class AdminController extends Controller
 
 
         return view('admin.approved' , [
-            'shipments' => Shipment::where('status' , 'approved')->latest()->get(),
-            'drivers' => User::where('role' , 'driver')->latest()->get()
+            'shipments' => Shipment::where('status' , 'approved')->latest()->paginate(10),
+            'drivers' => User::where('role' , 'driver')->latest()->paginate(10)
         ]);
    }
 
@@ -171,8 +173,8 @@ class AdminController extends Controller
       return redirect('/admin/customers')->with('success' , 'Your Successfully Registered!');
    }
 
-   public function deleteCustomer(User $customer){
-     
+   public function deleteCustomer(User $customer)
+    {
           if($customer->role !== 'customer'){
             abort(403);
           }
@@ -194,7 +196,8 @@ class AdminController extends Controller
      'in_transit' => Shipment::where('status' , 'in_transit')->count(),
      'rejected' => Shipment::where('status' , 'rejected')->count(),
      'totalCustomers' => User::where('role' , 'customer')->count(),
-     'alerts' => Alert::where('status' , 'active')->count()
+     'alerts' => Alert::where('status' , 'active')->count(),
+     'drivers' => User::where('role' , 'driver')->count()
     ]);
    }
     public function updatePending(Request $request, Shipment $shipment)

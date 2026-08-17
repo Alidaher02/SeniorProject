@@ -17,6 +17,7 @@ use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\ShipmentReportController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Gps\gpsController;
+use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\Shipments\SettingsController as ShipmentsSettingsController;
 
 Route::redirect('/' , '/shipments');
@@ -84,11 +85,11 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/alerts/count' , [AlertController::class , 'alertCounts']);
 
     Route::get('/admin/settings' ,[SettingsController::class , 'index']);
-    Route::patch('/profile' , [SettingsController::class , 'update']);
+
 
     Route::get('/admin/ai-assistant' , [adminAiController::class , 'index']);
 
-    Route::get('/admin/ai-assistant/insights' , [adminAiController::class , 'analayze']);
+    Route::get('/admin/ai-assistant/{shipment}/analyze' , [adminAiController::class , 'analyze']);
 
 
 
@@ -122,3 +123,4 @@ Route::get('/gps/address/{shipment}', [gpsController::class, 'address']);
 Route::post('/profile/photo' , [SettingsController::class , 'uploadPhoto'])->middleware('auth');
 
 
+Route::patch('/profile' , [ProfileController::class , 'update']);

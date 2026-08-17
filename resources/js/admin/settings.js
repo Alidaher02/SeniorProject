@@ -9,9 +9,7 @@ event.preventDefault();
 
     const name = document.getElementById("userName").value.trim();
     const email = document.getElementById("userEmail").value.trim();
-
-    const originalName = userName.value.trim();
-    const originalEmail = userEmail.value.trim();
+    const image = document.getElementById("profileImage").files[0];
 
     const nameError = document.getElementById("nameError");
     const emailError = document.getElementById("emailError");   
@@ -33,24 +31,31 @@ event.preventDefault();
         valid = false;
     } 
 
-    if(name === originalName && email === originalEmail)
-    {
-
-      nameError.textContent =   "No changes were made.";
-      
-        valid = false;       
-    }
 
     if(!valid) return;
 
+    const formData = new FormData();
+        formData.append("name", name);
+        formData.append("email", email);
+        if(image)
+        {
+            formData.append("image" , image);
+            
+        }
+        formData.append("_method", "PATCH");
+          console.log([...formData.entries()]);
         try
     {
-    let response = await axios.patch('/profile' , {
-        name: name,
-        email: email,
-    });
+    
+    let response = await axios.post('/profile' , formData);
 
     displayMessage(document.getElementById("profileMessage") , response.data.message);
+
+    if (image) {
+    const preview = document.getElementById("profileImagePreview");
+
+    preview.src = URL.createObjectURL(image);
+}
 
 
     } catch (error){

@@ -141,43 +141,51 @@
 
 
                                     <!-- Assign Driver -->
-                                    {{-- <a href="/admin/shipments/{{ $shipment->id }}/assign"
-                                        class="rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-600 transition hover:bg-blue-100">
-                                        Assign Driver
-                                    </a> --}}
-  
-                                <form action="/admin/approved/{{ $shipment->id }}" method="POST">
-                                    @csrf
-                                    @method('PATCH')
-                                    <select name="driver_id"
-                                     class="rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs">
 
-                                    <option value="">
-                                        Select Driver
-                                    </option>
+                                    <form action="/admin/approved/{{ $shipment->id }}" method="POST">
 
-                                    @foreach($drivers as $driver)
+                                        @csrf
+                                        @method('PATCH')
 
-                                        <option value="{{ $driver->id }}">
-                                        {{$driver->name}}
-                                        </option>
+                                        <select
+                                            name="driver_id"
+                                            class="rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs">
 
-                                    @endforeach
+                                            <option value="">
+                                                Select Driver
+                                            </option>
 
-                                    </select>
+                                            @foreach($drivers as $driver)
+
+                                                <option value="{{ $driver->id }}">
+                                                    {{ $driver->name }}
+                                                </option>
+
+                                            @endforeach
+
+                                        </select>
 
 
-                                    <button type="submit" class="rounded-lg border border-blue-100 bg-white px-3 py-1.5 text-xs font-semibold text-blue-600 transition hover:bg-blue-50">
-                                        Assign
-                                    </button>
+                                        <button
+                                            type="submit"
+                                            class="rounded-lg border border-blue-100 bg-white px-3 py-1.5 text-xs font-semibold text-blue-600 transition hover:bg-blue-50">
+
+                                            Assign
+
+                                        </button>
+
                                     </form>
 
 
 
                                     <!-- View -->
-                                    <a href="{{ url('/shipments/' . $shipment->id) }}"
+
+                                    <a
+                                        href="{{ url('/shipments/' . $shipment->id) }}"
                                         class="rounded-lg border border-blue-100 bg-white px-3 py-1.5 text-xs font-semibold text-blue-600 transition hover:bg-blue-50">
+
                                         View
+
                                     </a>
 
 
@@ -194,7 +202,9 @@
                         <tr>
 
                             <td colspan="6" class="px-5 py-8 text-center text-sm text-gray-400">
+
                                 No approved shipments available.
+
                             </td>
 
                         </tr>
@@ -207,6 +217,133 @@
                 </table>
 
             </div>
+
+
+            <!-- Pagination -->
+
+            <div class="mt-5 flex items-center justify-between">
+
+                {{-- Previous --}}
+
+                @if ($shipments->onFirstPage())
+
+                    <span class="flex h-9 items-center justify-center rounded-lg px-3 text-sm font-medium text-slate-300 cursor-not-allowed">
+                        Previous
+                    </span>
+
+                @else
+
+                    <a
+                        href="{{ $shipments->previousPageUrl() }}"
+                        class="flex h-9 items-center justify-center rounded-lg border border-slate-200 px-3 text-sm font-medium text-slate-600 transition hover:bg-blue-50 hover:text-blue-600">
+
+                        Previous
+
+                    </a>
+
+                @endif
+
+
+                {{-- Pages --}}
+
+                <div class="hidden items-center gap-1 sm:flex">
+
+                    {{-- First page --}}
+
+                    @if ($shipments->currentPage() > 3)
+
+                        <a
+                            href="{{ $shipments->url(1) }}"
+                            class="flex h-9 min-w-9 items-center justify-center rounded-lg px-3 text-sm font-medium text-slate-600 hover:bg-blue-50 hover:text-blue-600">
+
+                            1
+
+                        </a>
+
+                        <span class="px-1 text-slate-400">
+                            ...
+                        </span>
+
+                    @endif
+
+
+                    {{-- Nearby pages --}}
+
+                    @foreach ($shipments->getUrlRange(
+                        max(1, $shipments->currentPage() - 2),
+                        min($shipments->lastPage(), $shipments->currentPage() + 2)
+                    ) as $page => $url)
+
+                        @if ($page == $shipments->currentPage())
+
+                            <span
+                                class="flex h-9 min-w-9 items-center justify-center rounded-lg bg-blue-600 px-3 text-sm font-semibold text-white shadow-sm shadow-blue-600/20">
+
+                                {{ $page }}
+
+                            </span>
+
+                        @else
+
+                            <a
+                                href="{{ $url }}"
+                                class="flex h-9 min-w-9 items-center justify-center rounded-lg px-3 text-sm font-medium text-slate-600 transition hover:bg-blue-50 hover:text-blue-600">
+
+                                {{ $page }}
+
+                            </a>
+
+                        @endif
+
+                    @endforeach
+
+
+                    {{-- Last page --}}
+
+                    @if ($shipments->currentPage() < $shipments->lastPage() - 2)
+
+                        <span class="px-1 text-slate-400">
+                            ...
+                        </span>
+
+                        <a
+                            href="{{ $shipments->url($shipments->lastPage()) }}"
+                            class="flex h-9 min-w-9 items-center justify-center rounded-lg px-3 text-sm font-medium text-slate-600 hover:bg-blue-50 hover:text-blue-600">
+
+                            {{ $shipments->lastPage() }}
+
+                        </a>
+
+                    @endif
+
+                </div>
+
+
+                {{-- Next --}}
+
+                @if ($shipments->hasMorePages())
+
+                    <a
+                        href="{{ $shipments->nextPageUrl() }}"
+                        class="flex h-9 items-center justify-center rounded-lg border border-slate-200 px-3 text-sm font-medium text-slate-600 transition hover:bg-blue-50 hover:text-blue-600">
+
+                        Next
+
+                    </a>
+
+                @else
+
+                    <span
+                        class="flex h-9 items-center justify-center rounded-lg px-3 text-sm font-medium text-slate-300 cursor-not-allowed">
+
+                        Next
+
+                    </span>
+
+                @endif
+
+            </div>
+
 
         </div>
 
