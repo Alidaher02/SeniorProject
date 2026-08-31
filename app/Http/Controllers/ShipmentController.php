@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
 use App\Notifications\ShipmentRequested;
+use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Str;
 
 
@@ -18,7 +19,8 @@ class ShipmentController extends Controller
      */
     public function index(Shipment $shipment , Request $request)
     {
-
+       
+       
 
 
         return view('shipments.shipments');
@@ -79,12 +81,12 @@ class ShipmentController extends Controller
     'departure_date' => ['required', 'date', 'after_or_equal:today'],
     'expected_arrival' => ['required', 'date', 'after:departure_date'],
     ]);
-
-    if (Auth::user()->shipments()->where('status', 'pending')->exists()) {
+        $user = Auth::user();
+    if ($user->shipments()->where('status', 'pending')->exists()) {
     return back()->with('error', 'You already have a pending shipment request.');
        }
 
-       $shipment = Auth::user()->shipments()->create([
+       $shipment = $user->shipments()->create([
         'customer_id' => Auth::id(),
         'product_name' => request('product_name'),
         'description' => request('description'),
@@ -100,6 +102,13 @@ class ShipmentController extends Controller
         
 
        ]);
+
+       $user->activities()->create([
+        'action' => 'Requested Shipment',
+        'description' => $user->name . ' requested a new shipment'
+       ]);
+
+
         return redirect('/shipments')->with('success' , 'Shipment is Created');
 
        Auth::user()->notify(new ShipmentRequested($shipment));

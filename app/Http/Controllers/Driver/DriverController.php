@@ -9,6 +9,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Enums\ShipmentStatus;
+use App\Jobs\AnalyzeShipment;
+use App\Services\GeminiService;
 
 class DriverController extends Controller
 {
@@ -16,7 +18,7 @@ class DriverController extends Controller
 
 
     $assignedShipments = Auth::user()->assignedShipments()
-    ->whereIn('status' , ['in_transit' , 'delivered'])
+    ->whereIn('status' , ['in_transit'])
     ->get();
 
     $in_transitCount = Auth::user()->assignedShipments()->where('status' , 'in_transit')->get();
@@ -31,12 +33,14 @@ class DriverController extends Controller
     }
 
 
-    public function updateToDelivered(Shipment $shipment){
+    public function updateToDelivered(GeminiService $geminiService , Shipment $shipment){
 
       $shipment->update([
         'status' =>  ShipmentStatus::DELIVERED
-      ]);
+      ]);  
 
-      return redirect('driver');
+      AnalyzeShipment::dispatch($shipment);
+
+      return redirect('/driver');
     }
 }

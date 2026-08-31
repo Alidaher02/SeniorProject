@@ -7,6 +7,7 @@ use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use App\Mail\WelcomeMail;
+use App\Models\Activity;
 use Illuminate\Support\Facades\Mail;
 
 class GoogleController extends Controller
@@ -36,6 +37,11 @@ class GoogleController extends Controller
 
             Auth::login($user);
 
+            Activity::create([
+            'user_id' => Auth::id(),
+            'action' => 'Logged In',
+            'description' => $user->name . ' just logged in to the system'
+            ]);
 
             return redirect('/shipments');
         }

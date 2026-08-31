@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Profile;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
+
 public function update(Request $request)
 {
     $validated = $request->validate([
@@ -28,4 +31,21 @@ public function update(Request $request)
         'message' => 'Profile updated successfully'
     ]);
 }
+
+    public function deleteImage()
+    {
+        $user = Auth::user();
+
+        if ($user->image) {
+            Storage::disk('public')->delete($user->image);
+
+            $user->image = null;
+            $user->save();
+        }
+
+        return response()->json([
+            'message' => 'Image deleted successfully',
+            'name' => $user->name,
+        ]);
+    }
 }

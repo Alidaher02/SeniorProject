@@ -7,6 +7,8 @@ import './admin/settings';
 import './admin/aiAnalayze';
 import './shipments/ai-assistant';
 import './gps/location';
+import './readings/sensor';
+import './notifications/notifications';
 
 window.addEventListener("load", () => {
 

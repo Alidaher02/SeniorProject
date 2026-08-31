@@ -27,16 +27,23 @@ public function login(Request $request)
 
         $request->session()->regenerate();
 
+        $user = Auth::user();
 
-        if (Auth::user()->isAdmin()) {
+        $user->activities()->create([
+            'action' => 'Logged In',
+            'description' => $user->name . ' just logged in to the system'
+        ]);
+
+        if ($user->isAdmin()) {
             return redirect('/admin')->with('success', 'Welcome Admin!');
         }
 
-        if (Auth::user()->isDriver()) {
+        if ($user->isDriver()) {
             return redirect('/driver')->with('success', 'Welcome Driver!');
         }
 
-        return redirect()->intended('/shipments')->with('success', 'You are logged in!');    }
+        return redirect()->intended('/shipments')->with('success', 'You are logged in!');
+            }
 
      
 

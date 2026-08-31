@@ -8,6 +8,7 @@ use App\Models\Alert;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Enums\ShipmentStatus;
+use App\Models\Activity;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\Auth;
@@ -45,14 +46,14 @@ class AdminController extends Controller
             $drivers
         ];
 
-
-
+          $activities =  Activity::with('user:id,name,image')->latest()->limit(5)->get();
 
         return view('admin.adminShipments' , [
 
             'shipments' => Shipment::where('status' , '!=' , 'pending')->latest()->get(),
             'shipmentStatus' => $shipmentStatus,
             'userStats' => $userStats,
+            'activities' => $activities
             
         ]);
    }
@@ -197,7 +198,6 @@ class AdminController extends Controller
      'rejected' => Shipment::where('status' , 'rejected')->count(),
      'totalCustomers' => User::where('role' , 'customer')->count(),
      'alerts' => Alert::where('status' , 'active')->count(),
-     'drivers' => User::where('role' , 'driver')->count()
     ]);
    }
     public function updatePending(Request $request, Shipment $shipment)

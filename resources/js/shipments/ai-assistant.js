@@ -20,29 +20,49 @@ async function history() {
 history();
 
 window.chat = async function() {
-    let input = document.getElementById('messageInput');
 
+    let input = document.getElementById('messageInput');
     let message = input.value;
 
-    if(message.trim() === "") {
-    return;
+    if (message.trim() === "") {
+        return;
     }
 
     input.value = "";
 
     let messageTime = new Date();
 
-    displayMessage(message , messageTime);
-
+    displayMessage(message, messageTime);
     showTyping();
 
+    try {
 
-    let response = await axios.post('/ai/chat', {
-        message: message
-    });
+        let response = await axios.post('/ai/chat', {
+            message: message
+        });
 
-    hideTyping();
-    displayAiMessage(response.data.aiResponse , messageTime);
+        hideTyping();
+
+        displayAiMessage(
+            response.data.aiResponse,
+            messageTime
+        );
+
+    } catch (error) {
+
+        hideTyping();
+
+        console.error("AI Chat Error:", error);
+
+        console.error("Status:", error.response?.status);
+
+        console.error("Server Response:", error.response?.data);
+
+        displayAiMessage(
+            "Sorry, something went wrong. Please try again.",
+            new Date()
+        );
+    }
 }
 
 function displayAiMessage(aiResponse, createdAt = null)

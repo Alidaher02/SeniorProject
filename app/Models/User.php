@@ -32,19 +32,19 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
-    public function shipments(): hasMany
+    public function shipments(): HasMany
     {
 
          return $this->hasMany(Shipment::class , 'customer_id');
     }
 
-    public function assignedShipments(): hasMany
+    public function assignedShipments(): HasMany
     {
 
          return $this->hasMany(Shipment::class , 'driver_id');
     }
 
-    public function messages()
+    public function messages(): HasMany
     {
         return $this->hasMany(ChatMessage::class, 'customer_id');
     }
@@ -62,6 +62,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isCustomer(){
         
         return $this->role === 'customer';
+    }
+
+    public function activities(): HasMany
+    {
+        return $this->hasMany(Activity::class);
     }
 
 

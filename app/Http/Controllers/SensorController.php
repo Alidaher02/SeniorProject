@@ -14,7 +14,7 @@ use Illuminate\Support\Str;
 
 class SensorController extends Controller
 {
-        public function sensorReading(Shipment $shipment){
+    public function sensorReading(Shipment $shipment){
 
     $reading = $shipment->sensorReadings()->latest()->first();
 
@@ -23,7 +23,15 @@ class SensorController extends Controller
         'humidity' => $reading?->humidity,
         'tilt' => $reading?->tilt,
         'light' => $reading?->light,
-        'created_at' => $reading?->created_at
+        'created_at' => $reading?->created_at,
+
+        'shipment' => [
+            'min_temperature' => $shipment->min_temperature,
+            'max_temperature' => $shipment->max_temperature,
+            'min_humidity' => $shipment->min_humidity,
+            'max_humidity' => $shipment->max_humidity,
+        ]
+        
     ]);
 
     }
@@ -39,26 +47,14 @@ public function storeReadings(Request $request)
         ], 404);
     }
 
-    $reading = $shipment->sensorReadings()->latest()->first();
-
-    if($reading)
-    {
-        $reading->update([
-            'temperature' => $request->temperature,
-            'humidity' => $request->humidity,
-            'tilt' => $request->tilt,
-            'light' => $request->light
-        ]);
-    }
-    else
-    {
         $reading = $shipment->sensorReadings()->create([
             'temperature' => $request->temperature,
             'humidity' => $request->humidity,
             'tilt' => $request->tilt,
-            'light' => $request->light
+            'light' => $request->light,
         ]);
-    }
+    
+
 
     app(\App\Services\ShipmentMonitoringService::class)
     ->analyze($reading);

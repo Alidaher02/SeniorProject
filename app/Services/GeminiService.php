@@ -11,10 +11,12 @@ class GeminiService
     {
         $shipmentData = $this->getShipmentData($shipment);
 
-        $prompt = <<<PROMPT
+ $prompt = <<<PROMPT
 You are ShipTrack AI, an intelligent logistics monitoring system for administrators.
 
-The administrator has selected ONE shipment and requested an AI analysis.
+The driver has JUST marked the shipment as DELIVERED.
+
+This is the FINAL AI ANALYSIS of the shipment.
 
 Analyze ONLY the shipment provided below.
 
@@ -26,6 +28,10 @@ IMPORTANT:
 - Analyze ALL provided sensor readings, GPS readings, and alerts.
 - Compare every temperature and humidity reading against the shipment's configured limits.
 - Consider the chronological history of the readings, not only the latest reading.
+- Evaluate the shipment's condition throughout the entire transportation journey.
+- Determine whether the shipment was transported safely based on the available monitoring data.
+- The fact that the shipment is DELIVERED must NOT increase or decrease the risk by itself.
+- Base the risk entirely on the actual sensor readings, alerts, GPS data, and monitoring history.
 
 TEMPERATURE ANALYSIS:
 
@@ -44,6 +50,9 @@ IMPORTANT:
 - A temperature equal to the minimum is NORMAL.
 - A temperature equal to the maximum is NORMAL.
 - Never classify a value inside the allowed range as a problem.
+- Consider repeated temperature violations when calculating risk.
+- Consider the chronological history of temperature readings.
+- A normal temperature at delivery does not cancel out serious temperature violations that occurred earlier.
 
 HUMIDITY ANALYSIS:
 
@@ -62,6 +71,9 @@ IMPORTANT:
 - Humidity equal to the minimum is NORMAL.
 - Humidity equal to the maximum is NORMAL.
 - Never classify a value inside the allowed range as a problem.
+- Consider repeated humidity violations when calculating risk.
+- Consider the chronological history of humidity readings.
+- A normal humidity reading at delivery does not cancel out serious humidity violations that occurred earlier.
 
 TILT ANALYSIS:
 
@@ -91,6 +103,8 @@ Use the provided GPS readings to understand the shipment's movement/location his
 
 Do not invent addresses or locations.
 
+Do not invent a route or claim that the shipment followed a specific route unless the provided GPS data supports that conclusion.
+
 If GPS data is missing, mention missing GPS monitoring only if it is relevant to the shipment analysis.
 
 ALERT ANALYSIS:
@@ -109,6 +123,33 @@ Consider:
 Active alerts should have greater importance when calculating risk.
 
 Historical/resolved alerts may still be considered as part of the shipment history, but do not treat them as currently active.
+
+FINAL DELIVERY ANALYSIS:
+
+Because the shipment has now been marked as DELIVERED, provide a final assessment of the entire transportation journey.
+
+Consider:
+- temperature conditions throughout transportation
+- humidity conditions throughout transportation
+- tilt events
+- light readings when relevant
+- GPS monitoring when relevant
+- alerts
+- severity of violations
+- repeated violations
+- duration of violations when supported by the provided timestamps/readings
+- missing monitoring data
+- whether serious conditions occurred at any point during transportation
+
+IMPORTANT:
+- Do NOT analyze only the final sensor reading.
+- Analyze the complete available monitoring history.
+- A shipment can be delivered successfully while still having experienced problems during transportation.
+- A shipment with normal readings and no confirmed problems should have LOW risk.
+- A shipment with serious or repeated violations should have a higher risk.
+- The delivery status itself is NOT evidence of a problem.
+- Do not assume that the shipment was damaged unless the provided data supports that conclusion.
+- Do not assume that the shipment was safe unless the provided data supports that conclusion.
 
 ISSUES:
 
@@ -151,7 +192,7 @@ RISK:
 
 Calculate ONE overall risk percentage for this shipment.
 
-The risk represents the condition of the entire shipment based on its complete monitoring history.
+The risk represents the FINAL condition of the entire shipment based on its complete monitoring history.
 
 Consider:
 - temperature violations
@@ -161,6 +202,7 @@ Consider:
 - tilt events
 - light problems when relevant
 - active alerts
+- historical/resolved alerts
 - alert severity
 - GPS information when relevant
 - missing important monitoring data
@@ -178,6 +220,8 @@ IMPORTANT:
 - A shipment with normal readings and no problems should have LOW risk.
 - A shipment with repeated or serious violations should have a higher risk.
 - The percentage must reflect the actual provided data.
+- The fact that the shipment was delivered MUST NOT increase or decrease the risk by itself.
+- Calculate risk from the actual monitoring history.
 
 RECOMMENDATIONS:
 
@@ -202,13 +246,14 @@ Do not provide recommendations for problems that do not exist.
 
 SUMMARY:
 
-Create a short administrator-friendly summary.
+Create a short administrator-friendly FINAL delivery summary.
 
 The summary should mention:
 - overall shipment condition
 - most important confirmed problems
 - overall risk
 - whether immediate attention is required
+- whether the shipment appears to have been transported safely based on the available monitoring data
 
 Do not claim that normal readings are abnormal.
 
@@ -224,7 +269,7 @@ Use EXACTLY this structure:
 
 {
     "summary": "Short administrator-friendly summary of this shipment.",
-    
+
     "critical": [
         {
             "shipment_id": 8,
@@ -273,6 +318,9 @@ IMPORTANT:
 - If there are no critical problems, return an empty critical array.
 - If there are no warnings, return an empty warnings array.
 - If there are no recommendations, return an empty recommendations array.
+- Do not add additional fields.
+- Do not remove any fields.
+- The shipment has been marked as DELIVERED, so this is the FINAL analysis of its transportation history.
 
 SHIPMENT DATA:
 
@@ -347,6 +395,7 @@ PROMPT;
                 'recommendations' => $analysis['recommendations']
                     ?? [],
             ];
+            
 
         } catch (\Exception $e) {
             throw new \RuntimeException(

@@ -55,7 +55,7 @@ event.preventDefault();
     const preview = document.getElementById("profileImagePreview");
 
     preview.src = URL.createObjectURL(image);
-}
+    }
 
 
     } catch (error){
@@ -77,3 +77,24 @@ function displayMessage(message , body)
     }, 3000);
     
 }
+
+    const deleteImage = document.getElementById("deleteImage");
+    if(deleteImage)
+    {
+    deleteImage.addEventListener('click' , async () => {
+        try {
+        const image = document.getElementById("profileImage").files[0];
+        const response = await axios.delete('/profile/image');
+
+        const preview = document.getElementById("profileImagePreview");
+        const fileInput = document.getElementById("profileImage");
+
+preview.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(response.data.name)}&background=e2e8f0&color=475569`;        fileInput.value = "";
+
+
+        } catch (error) {
+            console.error(error);
+        }    
+    });
+
+    }

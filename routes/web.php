@@ -17,6 +17,7 @@ use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\ShipmentReportController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Gps\gpsController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\Shipments\SettingsController as ShipmentsSettingsController;
 
@@ -80,6 +81,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::patch('/admin/shipments/{shipment}', [AdminController::class, 'updatePending']);
     Route::patch('/admin/Rejectshipments/{shipment}', [AdminController::class, 'rejectShipment']);
     Route::patch('/admin/Approvedshipments/{shipment}', [AdminController::class, 'updateApproved']);
+    
     Route::get('/alerts', [AlertController::class, 'alerts']);
 
     Route::get('/alerts/count' , [AlertController::class , 'alertCounts']);
@@ -94,7 +96,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
 
 });
-// Route::get('/showAdminShipments/{shipment}' , [AdminController::class , 'showAdminShipments'])->middleware('auth');
 Route::get('/shipments/{shipment}' , [ShipmentController::class , 'show'])->middleware('auth');
 
 Route::post('/sensor/readings', [SensorController::class, 'storeReadings']);
@@ -107,20 +108,20 @@ Route::get('/auth/google/callback', [GoogleController::class, 'callback']);
 Route::get('/shipments/{shipment}/pdf' , [ShipmentReportController::class , 'generatePDF'])
 ->name('shipment.pdf');
 
-Route::get('/shipments/{shipment}/email', [ShipmentReportController::class, 'emailPDF'])
-    ->name('shipment.email');
+Route::get('/ai-assistant' , [AIController::class , 'index'])->middleware('auth');
+Route::post('/ai/chat' , [AIController::class , 'chat'])->middleware('auth');
+Route::get('/chat/history' , [AIController::class , 'history'])->middleware('auth');
 
-Route::get('/ai-assistant' , [AIController::class , 'index']);
-Route::post('/ai/chat' , [AIController::class , 'chat']);
-Route::get('/chat/history' , [AIController::class , 'history']);
+Route::post('/gps/readings' , [gpsController::class , 'store'])->middleware('auth');
 
-Route::post('/gps/readings' , [gpsController::class , 'store']);
+Route::get('/gps/readings/{shipment}' , [gpsController::class , 'latest'])->middleware('auth');
 
-Route::get('/gps/readings/{shipment}' , [gpsController::class , 'latest']);
+Route::get('/gps/address/{shipment}', [gpsController::class, 'address'])->middleware('auth');
 
-Route::get('/gps/address/{shipment}', [gpsController::class, 'address']);
+Route::patch('/profile' , [ProfileController::class , 'update'])->middleware('auth');
 
-Route::post('/profile/photo' , [SettingsController::class , 'uploadPhoto'])->middleware('auth');
+Route::delete('/profile/image' , [ProfileController::class , 'deleteImage'])->middleware('auth');
 
-
-Route::patch('/profile' , [ProfileController::class , 'update']);
+Route::get('/notifications' , [NotificationController::class , 'index']);
+Route::patch('/notifications/{notification}/read' , [NotificationController::class , 'read'])
+->middleware('auth');

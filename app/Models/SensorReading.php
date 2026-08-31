@@ -18,6 +18,13 @@ class SensorReading extends Model
 
     ];
 
+    protected $casts = [
+    'temperature' => 'float',
+    'humidity' => 'float',
+    'light' => 'float',
+    'tilt' => 'boolean',
+];
+
 
     public function shipment(){
 

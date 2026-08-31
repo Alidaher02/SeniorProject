@@ -25,8 +25,6 @@
             </div>
         </div>
 
-
-
         <!-- Content -->
         <div class="flex flex-col gap-6 min-w-0">
 
@@ -92,6 +90,8 @@
                 <div class="grid grid-cols-1 sm:grid-cols-1 gap-4.5">
 
                     <div>
+
+        </form>
                 <form id="updateProfile" class="space-y-6 w-full">
 
     <!-- Profile Photo -->
@@ -107,6 +107,22 @@
                 alt="Profile photo"
                 class="h-20 w-20 rounded-2xl object-cover ring-4 ring-white shadow-sm"
             >
+
+            <button
+                id="deleteImage"
+                type="button"
+                title="Remove profile photo"
+                class="absolute -right-2 -top-2 flex h-7 w-7 items-center justify-center rounded-full bg-white text-red-500 shadow-md ring-1 ring-red-100 transition hover:bg-red-50 hover:text-red-600 cursor-pointer"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    class="h-4 w-4"
+                >
+                    <path d="M9 3h6l1 2h4v2H4V5h4l1-2Zm-3 6h12l-1 11H7L6 9Zm3 2v7h2v-7H9Zm4 0v7h2v-7h-2Z"/>
+                </svg>
+            </button>
         </div>
 
         <!-- Upload -->
@@ -254,7 +270,7 @@
                    shadow-sm shadow-blue-600/20
                    transition
                    hover:bg-blue-700
-                   hover:-translate-y-0.5
+                   hover:-translate-y-0.5 cursor-pointer
                    active:translate-y-0"
         >
             Save changes

@@ -4,6 +4,12 @@ namespace App\Services;
 use App\Models\Alert;
 use App\Models\SensorReading;
 use App\Models\Shipment;
+use App\Notifications\HumidityAlert;
+use App\Notifications\LightAlert;
+use App\Notifications\LowHumidityAlert;
+use App\Notifications\LowTemperatureAlert;
+use App\Notifications\TiltAlert;
+use App\Notifications\ShipmentTemperatureAlert;
 
 class ShipmentMonitoringService
 {
@@ -47,6 +53,14 @@ class ShipmentMonitoringService
                 'sensor_reading_id' => $reading->id
             ]
         );
+        
+        $reading->shipment->customer->notify(
+            new ShipmentTemperatureAlert(
+                $reading->shipment,
+                $reading->temperature
+
+            )
+        );
     }
     else
     {
@@ -80,6 +94,15 @@ class ShipmentMonitoringService
                 'sensor_reading_id' => $reading->id
             ]
         );
+
+        $reading->shipment->customer->notify(
+            new LowTemperatureAlert(
+                $reading->shipment,
+                $reading->temperature
+
+            )
+        );
+
     }
     else
     {
@@ -113,6 +136,14 @@ private function checkHighHumidity($reading)
                 'sensor_reading_id' => $reading->id
             ]
         );
+
+        $reading->shipment->customer->notify(
+            new HumidityAlert(
+                $reading->shipment,
+                $reading->humidity
+
+            )
+        );        
     }
     else
     {
@@ -144,6 +175,14 @@ private function checkLowHumidity($reading)
                 'message' => 'Humidity Low',
                 'sensor_reading_id' => $reading->id
             ]
+        );
+
+        $reading->shipment->customer->notify(
+            new LowHumidityAlert(
+                $reading->shipment,
+                $reading->humidity
+
+            )
         );
     }
     else
@@ -178,6 +217,14 @@ private function checkTilt($reading)
                 'sensor_reading_id' => $reading->id
             ]
         );
+
+        $reading->shipment->customer->notify(
+            new TiltAlert(
+                $reading->shipment,
+                $reading->tilt
+
+            )
+        );     
     }
     else
     {
@@ -210,6 +257,14 @@ private function checkLight($reading)
                 'message' => 'Light Detected',
                 'sensor_reading_id' => $reading->id
             ]
+        );
+    
+            $reading->shipment->customer->notify(
+            new LightAlert(
+                $reading->shipment,
+                $reading->light
+
+            )
         );
     }
     else
