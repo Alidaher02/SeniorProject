@@ -846,9 +846,6 @@ The project demonstrates how IoT devices can communicate with a modern web appli
 
 ---
 
-# 👨‍💻 Author
-
-**Ali Daher**
 
 Computer Engineering
 Full Stack Web Developer
