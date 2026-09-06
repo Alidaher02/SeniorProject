@@ -112,7 +112,7 @@ Route::get('/ai-assistant' , [AIController::class , 'index'])->middleware('auth'
 Route::post('/ai/chat' , [AIController::class , 'chat'])->middleware('auth');
 Route::get('/chat/history' , [AIController::class , 'history'])->middleware('auth');
 
-Route::post('/gps/readings' , [gpsController::class , 'store'])->middleware('auth');
+Route::post('/gps/readings' , [gpsController::class , 'store']);
 
 Route::get('/gps/readings/{shipment}' , [gpsController::class , 'latest'])->middleware('auth');
 

@@ -1,0 +1,351 @@
+warning: in the working copy of 'resources/views/shipments/settings.blade.php', CRLF will be replaced by LF the next time Git touches it
+[1mdiff --git a/app/Services/GroqService.php b/app/Services/GroqService.php[m
+[1mindex b16a6a1..3e90c20 100644[m
+[1m--- a/app/Services/GroqService.php[m
+[1m+++ b/app/Services/GroqService.php[m
+[36m@@ -104,7 +104,7 @@[m [mpublic function ask($message)[m
+             }[m
+         $response = Http::withToken(env('GROQ_API_KEY'))[m
+             ->post('https://api.groq.com/openai/v1/chat/completions', [[m
+[31m-                'model' => 'llama-3.1-8b-instant',[m
+[32m+[m[32m                'model' => 'openai/gpt-oss-20b',[m
+                 'messages' => [[m
+                     [[m
+                         'role' => 'system',[m
+[36m@@ -402,6 +402,25 @@[m [mpublic function ask($message)[m
+                 ][m
+             ]);[m
+ [m
+[31m-        return $response->json()['choices'][0]['message']['content'];[m
+[32m+[m[32m        if ($response->failed()) {[m
+[32m+[m[32m    \Log::error('Groq API Error', [[m
+[32m+[m[32m        'status' => $response->status(),[m
+[32m+[m[32m        'body' => $response->body(),[m
+[32m+[m[32m    ]);[m
+[32m+[m
+[32m+[m[32m    return 'AI service error: ' . ($response->json('error.message') ?? 'Unknown error');[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m$data = $response->json();[m
+[32m+[m
+[32m+[m[32mif (!isset($data['choices'][0]['message']['content'])) {[m
+[32m+[m[32m    \Log::error('Unexpected Groq Response', [[m
+[32m+[m[32m        'response' => $data,[m
+[32m+[m[32m    ]);[m
+[32m+[m
+[32m+[m[32m    return 'AI returned an unexpected response.';[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mreturn $data['choices'][0]['message']['content'];[m
+     }[m
+ }[m
+\ No newline at end of file[m
+[1mdiff --git a/resources/views/shipments/settings.blade.php b/resources/views/shipments/settings.blade.php[m
+[1mindex 4b37019..b15ee61 100644[m
+[1m--- a/resources/views/shipments/settings.blade.php[m
+[1m+++ b/resources/views/shipments/settings.blade.php[m
+[36m@@ -283,633 +283,6 @@[m [mclass="rounded-xl bg-blue-600 px-5 py-2.5[m
+                 [m
+ [m
+             </section>[m
+[31m-[m
+[31m-[m
+[31m-            <!-- Notifications -->[m
+[31m-            <section id="notifications"[m
+[31m-                     class="scroll-mt-6 bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">[m
+[31m-[m
+[31m-                <div class="flex items-center gap-3.5 mb-6">[m
+[31m-[m
+[31m-                    <div class="w-9 h-9 rounded-[11px] bg-gradient-to-br from-[#4f7cff] to-[#8b5cf6][m
+[31m-                                flex items-center justify-center shadow-[0_4px_18px_-4px_rgba(79,124,255,0.35)] shrink-0">[m
+[31m-[m
+[31m-                        <svg class="w-4.5 h-4.5"[m
+[31m-                             viewBox="0 0 24 24"[m
+[31m-                             fill="none"[m
+[31m-                             stroke="white"[m
+[31m-                             stroke-width="1.8">[m
+[31m-[m
+[31m-                            <path d="M6 8a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6Z"/>[m
+[31m-                            <path d="M9.5 20a2.5 2.5 0 0 0 5 0"/>[m
+[31m-[m
+[31m-                        </svg>[m
+[31m-[m
+[31m-                    </div>[m
+[31m-[m
+[31m-                    <div>[m
+[31m-[m
+[31m-                        <h2 class="text-base font-semibold text-slate-900">[m
+[31m-                            Notifications[m
+[31m-                        </h2>[m
+[31m-[m
+[31m-                        <p class="text-[13px] text-slate-500 mt-0.5">[m
+[31m-                            Choose how you're alerted when a shipment needs attention.[m
+[31m-                        </p>[m
+[31m-[m
+[31m-                    </div>[m
+[31m-[m
+[31m-                </div>[m
+[31m-[m
+[31m-[m
+[31m-                <div class="divide-y divide-slate-200">[m
+[31m-[m
+[31m-                    <!-- Temperature -->[m
+[31m-                    <div class="flex items-center justify-between gap-4 py-4 first:pt-0">[m
+[31m-[m
+[31m-                        <div class="flex items-center gap-3">[m
+[31m-[m
+[31m-                            <div class="w-8.5 h-8.5 rounded-[9px] bg-slate-50 border border-slate-200[m
+[31m-                                        flex items-center justify-center shrink-0">[m
+[31m-[m
+[31m-                                <svg class="w-4 h-4 text-slate-500"[m
+[31m-                                     viewBox="0 0 24 24"[m
+[31m-                                     fill="none"[m
+[31m-                                     stroke="currentColor"[m
+[31m-                                     stroke-width="1.8">[m
+[31m-[m
+[31m-                                    <path d="M10 3h4v10.5a4 4 0 1 1-4 0V3Z"/>[m
+[31m-[m
+[31m-                                </svg>[m
+[31m-[m
+[31m-                            </div>[m
+[31m-[m
+[31m-                            <div>[m
+[31m-[m
+[31m-                                <div class="text-sm font-medium text-slate-900">[m
+[31m-                                    Temperature / humidity breach[m
+[31m-                                </div>[m
+[31m-[m
+[31m-                                <div class="text-xs text-slate-400 mt-0.5">[m
+[31m-                                    Reading falls outside the safe range[m
+[31m-                                </div>[m
+[31m-[m
+[31m-                            </div>[m
+[31m-[m
+[31m-                        </div>[m
+[31m-[m
+[31m-                        <div class="flex bg-slate-50 border border-slate-200 rounded-lg p-0.5 gap-0.5">[m
+[31m-[m
+[31m-                            <button class="px-2.5 py-1.5 rounded-md text-xs font-medium text-white[m
+[31m-                                           bg-gradient-to-br from-[#4f7cff] to-[#8b5cf6]">[m
+[31m-                                Email[m
+[31m-                            </button>[m
+[31m-[m
+[31m-                            <button class="px-2.5 py-1.5 rounded-md text-xs font-medium text-slate-400">[m
+[31m-                                SMS[m
+[31m-                            </button>[m
+[31m-[m
+[31m-                            <button class="px-2.5 py-1.5 rounded-md text-xs font-medium text-slate-400">[m
+[31m-                                Push[m
+[31m-                            </button>[m
+[31m-[m
+[31m-                        </div>[m
+[31m-[m
+[31m-                    </div>[m
+[31m-[m
+[31m-[m
+[31m-                    <!-- Tilt -->[m
+[31m-                    <div class="flex items-center justify-between gap-4 py-4">[m
+[31m-[m
+[31m-                        <div class="flex items-center gap-3">[m
+[31m-[m
+[31m-                            <div class="w-8.5 h-8.5 rounded-[9px] bg-slate-50 border border-slate-200[m
+[31m-                                        flex items-center justify-center shrink-0">[m
+[31m-[m
+[31m-                                <svg class="w-4 h-4 text-slate-500"[m
+[31m-                                     viewBox="0 0 24 24"[m
+[31m-                                     fill="none"[m
+[31m-                                     stroke="currentColor"[m
+[31m-                                     stroke-width="1.8">[m
+[31m-[m
+[31m-                                    <path d="M12 3l7 14H5l7-14Z"/>[m
+[31m-[m
+[31m-                                </svg>[m
+[31m-[m
+[31m-                            </div>[m
+[31m-[m
+[31m-                            <div>[m
+[31m-[m
+[31m-                                <div class="text-sm font-medium text-slate-900">[m
+[31m-                                    Tilt or shock detected[m
+[31m-                                </div>[m
+[31m-[m
+[31m-                                <div class="text-xs text-slate-400 mt-0.5">[m
+[31m-                                    Package orientation or impact event[m
+[31m-                                </div>[m
+[31m-[m
+[31m-                            </div>[m
+[31m-[m
+[31m-                        </div>[m
+[31m-[m
+[31m-                        <div class="flex bg-slate-50 border border-slate-200 rounded-lg p-0.5 gap-0.5">[m
+[31m-[m
+[31m-                            <button class="px-2.5 py-1.5 rounded-md text-xs font-medium text-white[m
+[31m-                                           bg-gradient-to-br from-[#4f7cff] to-[#8b5cf6]">[m
+[31m-                                Email[m
+[31m-                            </button>[m
+[31m-[m
+[31m-                            <button class="px-2.5 py-1.5 rounded-md text-xs font-medium text-white[m
+[31m-                                           bg-gradient-to-br from-[#4f7cff] to-[#8b5cf6]">[m
+[31m-                                SMS[m
+[31m-                            </button>[m
+[31m-[m
+[31m-                            <button class="px-2.5 py-1.5 rounded-md text-xs font-medium text-slate-400">[m
+[31m-                                Push[m
+[31m-                            </button>[m
+[31m-[m
+[31m-                        </div>[m
+[31m-[m
+[31m-                    </div>[m
+[31m-[m
+[31m-[m
+[31m-                    <!-- Delivered -->[m
+[31m-                    <div class="flex items-center justify-between gap-4 py-4">[m
+[31m-[m
+[31m-                        <div class="flex items-center gap-3">[m
+[31m-[m
+[31m-                            <div class="w-8.5 h-8.5 rounded-[9px] bg-slate-50 border border-slate-200[m
+[31m-                                        flex items-center justify-center shrink-0">[m
+[31m-[m
+[31m-                                <svg class="w-4 h-4 text-slate-500"[m
+[31m-                                     viewBox="0 0 24 24"[m
+[31m-                                     fill="none"[m
+[31m-                                     stroke="currentColor"[m
+[31m-                                     stroke-width="1.8">[m
+[31m-[m
+[31m-                                    <path d="M3 12h4l2-7 4 14 2-7h6"/>[m
+[31m-[m
+[31m-                                </svg>[m
+[31m-[m
+[31m-                            </div>[m
+[31m-[m
+[31m-                            <div>[m
+[31m-[m
+[31m-                                <div class="text-sm font-medium text-slate-900">[m
+[31m-                                    Delivered or delayed[m
+[31m-                                </div>[m
+[31m-[m
+[31m-                                <div class="text-xs text-slate-400 mt-0.5">[m
+[31m-                                    Status change on a tracked shipment[m
+[31m-                                </div>[m
+[31m-[m
+[31m-                            </div>[m
+[31m-[m
+[31m-                        </div>[m
+[31m-[m
+[31m-                        <div class="flex bg-slate-50 border border-slate-200 rounded-lg p-0.5 gap-0.5">[m
+[31m-[m
+[31m-                            <button class="px-2.5 py-1.5 rounded-md text-xs font-medium text-white[m
+[31m-                                           bg-gradient-to-br from-[#4f7cff] to-[#8b5cf6]">[m
+[31m-                                Email[m
+[31m-                            </button>[m
+[31m-[m
+[31m-                            <button class="px-2.5 py-1.5 rounded-md text-xs font-medium text-slate-400">[m
+[31m-                                SMS[m
+[31m-                            </button>[m
+[31m-[m
+[31m-                            <button class="px-2.5 py-1.5 rounded-md text-xs font-medium text-white[m
+[31m-                                           bg-gradient-to-br from-[#4f7cff] to-[#8b5cf6]">[m
+[31m-                                Push[m
+[31m-                            </button>[m
+[31m-[m
+[31m-                        </div>[m
+[31m-[m
+[31m-                    </div>[m
+[31m-[m
+[31m-[m
+[31m-                    <!-- Approval -->[m
+[31m-                    <div class="flex items-center justify-between gap-4 py-4 last:pb-0">[m
+[31m-[m
+[31m-                        <div class="flex items-center gap-3">[m
+[31m-[m
+[31m-                            <div class="w-8.5 h-8.5 rounded-[9px] bg-slate-50 border border-slate-200[m
+[31m-                                        flex items-center justify-center shrink-0">[m
+[31m-[m
+[31m-                                <svg class="w-4 h-4 text-slate-500"[m
+[31m-                                     viewBox="0 0 24 24"[m
+[31m-                                     fill="none"[m
+[31m-                                     stroke="currentColor"[m
+[31m-                                     stroke-width="1.8">[m
+[31m-[m
+[31m-                                    <path d="M9 12l2 2 4-4"/>[m
+[31m-                                    <circle cx="12" cy="12" r="9"/>[m
+[31m-[m
+[31m-                                </svg>[m
+[31m-[m
+[31m-                            </div>[m
+[31m-[m
+[31m-                            <div>[m
+[31m-[m
+[31m-                                <div class="text-sm font-medium text-slate-900">[m
+[31m-                                    Pending approval[m
+[31m-                                </div>[m
+[31m-[m
+[31m-                                <div class="text-xs text-slate-400 mt-0.5">[m
+[31m-                                    A new shipment request is awaiting review[m
+[31m-                                </div>[m
+[31m-[m
+[31m-                            </div>[m
+[31m-[m
+[31m-                        </div>[m
+[31m-[m
+[31m-                        <div class="flex bg-slate-50 border border-slate-200 rounded-lg p-0.5 gap-0.5">[m
+[31m-[m
+[31m-                            <button class="px-2.5 py-1.5 rounded-md text-xs font-medium text-white[m
+[31m-                                           bg-gradient-to-br from-[#4f7cff] to-[#8b5cf6]">[m
+[31m-                                Email[m
+[31m-                            </button>[m
+[31m-[m
+[31m-                            <button class="px-2.5 py-1.5 rounded-md text-xs font-medium text-slate-400">[m
+[31m-                                SMS[m
+[31m-                            </button>[m
+[31m-[m
+[31m-                            <button class="px-2.5 py-1.5 rounded-md text-xs font-medium text-slate-400">[m
+[31m-                                Push[m
+[31m-                            </button>[m
+[31m-[m
+[31m-                        </div>[m
+[31m-[m
+[31m-                    </div>[m
+[31m-[m
+[31m-                </div>[m
+[31m-[m
+[31m-[m
+[31m-                <div class="flex justify-end gap-2.5 mt-6 pt-5 border-t border-slate-200">[m
+[31m-[m
+[31m-                    <button class="px-4.5 py-2.5 rounded-lg text-sm font-medium text-slate-500[m
+[31m-                                   border cursor-pointer border-slate-200 hover:bg-slate-50 hover:text-slate-900 transition">[m
+[31m-                        Cancel[m
+[31m-                    </button>[m
+[31m-[m
+[31m-                    <button class="px-4.5 py-2.5 rounded-lg text-sm font-medium text-white[m
+[31m-                                   bg-blue-600 cursor-pointer hover:bg-blue-700[m
+[31m-                                   shadow-[0_4px_16px_-4px_rgba(79,124,255,0.4)][m
+[31m-                                   hover:-translate-y-0.5 transition">[m
+[31m-                        Save preferences[m
+[31m-                    </button>[m
+[31m-[m
+[31m-                </div>[m
+[31m-[m
+[31m-            </section>[m
+[31m-[m
+[31m-[m
+[31m-            <!-- Alert thresholds -->[m
+[31m-            <section id="thresholds"[m
+[31m-                     class="scroll-mt-6 bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">[m
+[31m-[m
+[31m-                <div class="flex items-center gap-3.5 mb-6">[m
+[31m-[m
+[31m-                    <div class="w-9 h-9 rounded-[11px] bg-gradient-to-br from-[#4f7cff] to-[#8b5cf6][m
+[31m-                                flex items-center justify-center shadow-[0_4px_18px_-4px_rgba(79,124,255,0.35)] shrink-0">[m
+[31m-[m
+[31m-                        <svg class="w-4.5 h-4.5"[m
+[31m-                             viewBox="0 0 24 24"[m
+[31m-                             fill="none"[m
+[31m-                             stroke="white"[m
+[31m-                             stroke-width="1.8">[m
+[31m-[m
+[31m-                            <path d="M4 12h16M4 6h10M4 18h7"/>[m
+[31m-[m
+[31m-                        </svg>[m
+[31m-[m
+[31m- 

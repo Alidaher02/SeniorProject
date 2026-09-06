@@ -104,7 +104,7 @@ class GroqService
             }
         $response = Http::withToken(env('GROQ_API_KEY'))
             ->post('https://api.groq.com/openai/v1/chat/completions', [
-                'model' => 'llama-3.1-8b-instant',
+                'model' => 'openai/gpt-oss-20b',
                 'messages' => [
                     [
                         'role' => 'system',
@@ -402,6 +402,25 @@ class GroqService
                 ]
             ]);
 
-        return $response->json()['choices'][0]['message']['content'];
+        if ($response->failed()) {
+    \Log::error('Groq API Error', [
+        'status' => $response->status(),
+        'body' => $response->body(),
+    ]);
+
+    return 'AI service error: ' . ($response->json('error.message') ?? 'Unknown error');
+}
+
+$data = $response->json();
+
+if (!isset($data['choices'][0]['message']['content'])) {
+    \Log::error('Unexpected Groq Response', [
+        'response' => $data,
+    ]);
+
+    return 'AI returned an unexpected response.';
+}
+
+return $data['choices'][0]['message']['content'];
     }
 }
